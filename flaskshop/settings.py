@@ -7,14 +7,14 @@ from pathlib import Path
 #     ENV = "dev"
 
 class DBConfig:
-    db_type = os.getenv("DB_TYPE", "mysql")
+    db_type = os.getenv("DB_TYPE", "postgresql")
     if db_type == "postgresql":
         db_type = os.getenv("DB_TYPE", "postgresql")
-        user = os.getenv("DB_USER", "DB_USER")
-        passwd = os.getenv("DB_PASSWD", "DB_PASSWD")
+        user = os.getenv("DB_USER", "glenbert_colt")
+        passwd = os.getenv("DB_PASSWD", "Nelly3253")
         host = os.getenv("DB_HOST", "localhost")
         port = os.getenv("DB_PORT", 5432)
-        db_name = os.getenv("DB_NAME", "DB_NAME")
+        db_name = os.getenv("DB_NAME", "glenbert_flaskshop")
         db_uri = f"postgresql://{user}:{passwd}@{host}:{port}/{db_name}"
     elif db_type == "mysql":
         db_type = os.getenv("DB_TYPE", "mysql")
