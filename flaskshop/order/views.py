@@ -133,8 +133,8 @@ def test_pay_flow(token):
             },
         ],
         mode='payment',
-        success_url= 'http://127.0.0.1:5000' + '/orders/payment_success/' + str(token),
-        cancel_url= 'http://127.0.0.1:5000' + '/orders/' + str(token),
+        success_url= 'https://glenbertsfish.com' + '/orders/payment_success/' + str(token),
+        cancel_url= 'https://glenbertsfish.com' + '/orders/' + str(token),
         automatic_tax={'enabled': True},
         )
         # if checkout_session.payment_status != 'unpaid':
