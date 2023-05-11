@@ -10,7 +10,7 @@
               <div class="home--content-inner">
                 <h1>{% trans %}Wild Alaskan Sockeye Salmon{% endtrans %}</h1>
                 <h2>{% trans %}from Egegik AK{% endtrans %}</h2>
-                <a class="btn btn-secondary home__button" href="#">
+                <a class="btn btn-secondary home__button" href="{{ url_for('product.show_category', id=1) }}">
                   {% trans %}Shop now{% endtrans %}
                 </a>
               </div>
@@ -26,7 +26,7 @@
             <div class="home--content-wrapper">
               <div class="home--content-inner">
                 <h1>{% trans %}Merchandise{% endtrans %}</h1>
-                <a class="btn btn-secondary home__button" href="#">{% trans %}Shop now{% endtrans %}</a>
+                <a class="btn btn-secondary home__button" href="{{ url_for('product.show_category', id=2) }}">{% trans %}Shop now{% endtrans %}</a>
               </div>
             </div>
           </div>
@@ -38,7 +38,7 @@
             <div class="home--content-wrapper">
               <div class="home--content-inner">
                 <h1>{% trans %}Our Story{% endtrans %}</h1>
-                <a class="btn btn-secondary home__button" href="#">{% trans %}About{% endtrans %}</a>
+                <a class="btn btn-secondary home__button" href="page/about">Our Story</a>
               </div>
             </div>
           </div>

@@ -1,0 +1,98 @@
+<style>
+table.bottomBorder {
+      border-collapse: collapse;
+    }
+table.bottomBorder td,
+table.bottomBorder th {
+      border-bottom: 1px solid lightgray; 
+      padding: 10px;
+      text-align: left;
+</style>
+
+
+        <h2>
+            {% trans %}Order{% endtrans %}: {{ order.token }}<br>
+            {% trans %}Order Status{% endtrans %}: {{ order.status_human }}
+        </h2>
+<head>
+    <title>Purchase</title>
+</head>
+
+
+        <table>
+
+          <tr>
+            <th>Product<th>
+            <th>Quantity<th>
+            <th>Price<th>
+          </tr>
+              {% for line in order.lines %}
+          <tr>
+              <td><a class="link--clean" href="{% if line.variant %}{{ line.variant.get_absolute_url() }}{% endif %}">
+                    <img class="float-left lazyload lazypreload" src="{{ line.variant.product.first_img }}" width="60">
+                    <span class="order-details__product__description">{{ line.product_name }}</span>
+                  </a>
+              </td>
+              <td>x {{ line.quantity }}</td>
+              <td>${{ line.get_total() }}</td>
+          </tr>
+
+
+              {% endfor %}
+
+      </table>
+
+
+
+
+                    <p class="float-right"></p>
+
+
+
+
+                {% trans %}Subtotal{% endtrans %}
+
+                ${{ order.total_net }}
+
+            <br>
+
+
+{% if order.is_shipping_required %}
+
+
+                {% trans %}Shipping{% endtrans %}
+                ({{ order.shipping_method_name}})
+
+                ${{ order.shipping_price_net }}
+
+{% endif %}
+
+{% if order.discount_amount %}
+
+            <p>{{ order.discount_name }}</p>
+
+                -${{ order.discount_amount  }}
+
+{% endif %}
+
+
+                <h3>{% trans %}Total{% endtrans %}</h3>
+
+                ${{ order.total  }}
+
+
+
+            {% if order.is_shipping_required %}
+            <h3>
+                {% trans %}Shipping address{% endtrans %}
+            </h3>
+            {{ order.shipping_address | safe }}
+            {% endif %}
+
+
+            {% if order.notes %}
+            <h2>{% trans %}Your note{% endtrans %}</h2>
+            {% for note in order.notes %}
+            <p>{{ note.content }}</p>
+            {% endfor %}
+            {% endif %}

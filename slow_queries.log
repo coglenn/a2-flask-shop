@@ -3181,3 +3181,119 @@ Traceback (most recent call last):
   File "/home/glenbert/flask-shop/flaskshop/order/views.py", line 168, in cancel_order
     if not order.is_self_order:
 AttributeError: 'NoneType' object has no attribute 'is_self_order'
+[2023-05-10 15:47:19,892]{/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/flask/app.py:1449}
+ERROR - Exception on / [GET]
+Traceback (most recent call last):
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3361, in _wrap_pool_connect
+    return fn()
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 310, in connect
+    return _ConnectionFairy._checkout(self)
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 868, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 476, in checkout
+    rec = pool._do_get()
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/pool/impl.py", line 146, in _do_get
+    self._dec_overflow()
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/util/langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/util/compat.py", line 208, in raise_
+    raise exception
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/pool/impl.py", line 143, in _do_get
+    return self._create_connection()
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 256, in _create_connection
+    return _ConnectionRecord(self)
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 371, in __init__
+    self.__connect()
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 666, in __connect
+    pool.logger.debug("Error on connect(): %s", e)
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/util/langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/util/compat.py", line 208, in raise_
+    raise exception
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 661, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/engine/create.py", line 578, in connect
+    return dialect.connect(*cargs, **cparams)
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 597, in connect
+    return self.dbapi.connect(*cargs, **cparams)
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "glenbert_colt" does not exist
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/flask/app.py", line 1519, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/flask/app.py", line 1517, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/flask/app.py", line 1503, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/coltglenn/flask_shop/flask-shop/flaskshop/public/views.py", line 23, in home
+    products = Product.get_featured_product()
+  File "/Users/coltglenn/flask_shop/flask-shop/flaskshop/corelib/mc.py", line 47, in _
+    return f(*a, **kw)
+  File "/Users/coltglenn/flask_shop/flask-shop/flaskshop/product/models.py", line 114, in get_featured_product
+    return cls.query.filter_by(is_featured=True).limit(num).all()
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2772, in all
+    return self._iter().all()
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2907, in _iter
+    result = self.session.execute(
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 1711, in execute
+    conn = self._connection_for_bind(bind)
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 1552, in _connection_for_bind
+    return self._transaction._connection_for_bind(
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 747, in _connection_for_bind
+    conn = bind.connect()
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3315, in connect
+    return self._connection_cls(self, close_with_result=close_with_result)
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 96, in __init__
+    else engine.raw_connection()
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3394, in raw_connection
+    return self._wrap_pool_connect(self.pool.connect, _connection)
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3364, in _wrap_pool_connect
+    Connection._handle_dbapi_exception_noconnection(
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2198, in _handle_dbapi_exception_noconnection
+    util.raise_(
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/util/compat.py", line 208, in raise_
+    raise exception
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3361, in _wrap_pool_connect
+    return fn()
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 310, in connect
+    return _ConnectionFairy._checkout(self)
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 868, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 476, in checkout
+    rec = pool._do_get()
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/pool/impl.py", line 146, in _do_get
+    self._dec_overflow()
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/util/langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/util/compat.py", line 208, in raise_
+    raise exception
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/pool/impl.py", line 143, in _do_get
+    return self._create_connection()
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 256, in _create_connection
+    return _ConnectionRecord(self)
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 371, in __init__
+    self.__connect()
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 666, in __connect
+    pool.logger.debug("Error on connect(): %s", e)
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/util/langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/util/compat.py", line 208, in raise_
+    raise exception
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 661, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/engine/create.py", line 578, in connect
+    return dialect.connect(*cargs, **cparams)
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 597, in connect
+    return self.dbapi.connect(*cargs, **cparams)
+  File "/Users/coltglenn/flask_shop/flask-shop/flask-shop/lib/python3.9/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "glenbert_colt" does not exist
+
+(Background on this error at: https://sqlalche.me/e/14/e3q8)

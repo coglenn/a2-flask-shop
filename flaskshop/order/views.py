@@ -2,6 +2,7 @@ import time, re
 from datetime import datetime
 
 from flask import (
+    current_app,
     Blueprint,
     abort,
     redirect,
@@ -12,8 +13,10 @@ from flask import (
 
 from flask_babel import lazy_gettext
 from flask_login import current_user, login_required
+from flask_mail import Mail, Message
 from pluggy import HookimplMarker
 
+from flaskshop.account.models import User
 from flaskshop.constant import OrderStatusKinds, PaymentStatusKinds, ShipStatusKinds
 from flaskshop.extensions import csrf_protect
 # from .payment import zhifubao
@@ -113,7 +116,7 @@ def create_payment(token, payment_method):
 
 @login_required
 def test_pay_flow(token):
-    payment = create_payment(token, "strip_pay")
+    payment = create_payment(token, "stripe_pay")
     order = Order.query.filter_by(token=token).first()
     payment = OrderPayment.query.filter_by(order_id=order.id).first()
     stripe_pmt = OrderLine.query.filter_by(order_id=order.id).first()
@@ -130,8 +133,8 @@ def test_pay_flow(token):
             },
         ],
         mode='payment',
-        success_url= 'https://glenbertsfish.com' + '/orders/payment_success',
-        cancel_url= 'https://glenbertsfish.com' + '/orders/' + str(token),
+        success_url= 'http://127.0.0.1:5000' + '/orders/payment_success/' + str(token),
+        cancel_url= 'http://127.0.0.1:5000' + '/orders/' + str(token),
         automatic_tax={'enabled': True},
         )
         # if checkout_session.payment_status != 'unpaid':
@@ -146,20 +149,36 @@ def test_pay_flow(token):
     return redirect(checkout_session.url, code=303)
 
 
+
+
 @login_required
-def payment_success():
+def payment_success(token):
+    payment = create_payment(token, "stripe_pay")
+    order = Order.query.filter_by(token=token).first()
+    order_num = str(order.token)
+    email_order_num = order_num.rsplit('-', 3)
+    order_user_id = order.user_id
+    user_email_address = User.query.get(order_user_id)
+    msg = Message(subject = 'Hello, Order#' + str(email_order_num[3]) + ' is processing!' ,
+                sender = ('Glenberts Fish Co.', 'orders@glenbertsfish.com'),
+                recipients = [user_email_address.email],
+                reply_to = None
+                )
+    msg.html = render_template("orders/order_email.html", order=order)
+    mail = Mail(current_app)
+    mail.send(msg)
     # payment_no = request.args.get("success_url")
-    # if payment_no:
-    #     res = zhifubao.query_order(payment_no)
+    # if payment:
+    #     res = zhifubao.query_order(payment)
     #     if res["code"] == "303":
     #         order_payment = OrderPayment.query.filter_by(
-    #             payment_no=res["out_trade_no"]
+    #             payment=res["out_trade_no"]
     #         ).first()
     #         order_payment.pay_success(paid_at=res["send_pay_date"])
     #     else:
     #         print(res["msg"])
 
-    return render_template("orders/checkout_success.html")
+    return render_template("orders/checkout_success.html", order=order)
 
 
 @login_required
@@ -189,7 +208,7 @@ def flaskshop_load_blueprints(app):
     # bp.add_url_rule("/pay/<string:token>/alipay", view_func=ali_pay)
     # bp.add_url_rule("/alipay/notify", view_func=ali_notify, methods=["POST", "HEAD"])
     bp.add_url_rule("/pay/<string:token>/testpay", view_func=test_pay_flow)
-    bp.add_url_rule("/payment_success", view_func=payment_success)
+    bp.add_url_rule("/payment_success/<string:token>", view_func=payment_success)
     bp.add_url_rule("/cancel/<string:token>", view_func=cancel_order)
     bp.add_url_rule("/receive/<string:token>", view_func=receive)
     app.register_blueprint(bp, url_prefix="/orders")
