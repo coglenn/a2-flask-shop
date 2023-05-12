@@ -80,7 +80,7 @@ class Config:
     BCRYPT_LOG_ROUNDS = 13
     DEBUG_TB_ENABLED = os.getenv("FLASK_DEBUG", False)  # Disable Debug toolbar
     DEBUG_TB_INTERCEPT_REDIRECTS = False
-    DEBUG_TB_PROFILER_ENABLED = True
+    DEBUG_TB_PROFILER_ENABLED = False
 
     MESSAGE_QUOTA = 10
 
