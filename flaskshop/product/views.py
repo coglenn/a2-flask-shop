@@ -5,6 +5,7 @@ from flask_login import login_required
 from pluggy import HookimplMarker
 
 from flaskshop.checkout.models import Cart
+from flaskshop.utils import flash_errors
 
 from .forms import AddCartForm
 from .models import Category, Product, ProductCollection, ProductVariant
