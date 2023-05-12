@@ -27,6 +27,8 @@ def product_add_to_cart(id):
 
     if form.validate_on_submit():
         Cart.add_to_currentuser_cart(form.quantity.data, form.variant.data)
+    else:
+        flash_errors(form)
     return redirect(url_for("product.show", id=id))
 
 
