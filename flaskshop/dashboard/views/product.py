@@ -20,6 +20,10 @@ from flaskshop.product.models import (
     ProductVariant,
 )
 from flaskshop.dashboard.utils import save_img_file, wrap_partial, item_del
+from stripe.error import InvalidRequestError
+import stripe
+
+stripe.api_key = 'sk_test_51N4QgvJs9hh3tFE1WZuvEtRkdsrvJzZnh4hlJMDE08snk478wGBuMpHvLFZlKtxK53XvAlP23YJqHl5F2wnjeYed0097p4sGbR'
 
 
 def attributes():
@@ -247,11 +251,21 @@ def product_manage(id=None):
         product = Product.get_by_id(id)
         form = ProductForm(obj=product)
         product_type = product.product_type
+        try:
+            stripe.Product.create(id=product.id, name=product.title)
+        except InvalidRequestError:
+            stripe.Product.modify(
+                str(product.id),
+                name=form.title.data,
+                # default_price=form.stripe_price_id.data,
+                active=form.on_sale.data,
+                )
     else:
         form = ProductForm()
         product_type_id = request.args.get("product_type_id", 1, int)
         product_type = ProductType.get_by_id(product_type_id)
         product = Product(product_type_id=product_type_id)
+        stripe.Product.create(id=product.id, name=product.title)
     form.category_id.choices = [(c.id, c.title) for c in Category.query.all()]
     if form.validate_on_submit():
         product.update_images(form.images.data)
@@ -269,6 +283,9 @@ def product_manage(id=None):
                 image=save_img_file(img),
                 product_id=product.id,
             )
+        # product_type_id = request.args.get("product_type_id", 1, int)
+
+        print(form.title)
         flash(lazy_gettext("Product saved."), "success")
         return redirect(url_for("dashboard.product_detail", id=product.id))
     context = {"form": form, "product_type": product_type}

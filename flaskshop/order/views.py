@@ -1,4 +1,4 @@
-import time, re
+import time, re, json
 from datetime import datetime
 
 from flask import (
@@ -122,24 +122,71 @@ def test_pay_flow(token):
     stripe_pmt = OrderLine.query.filter_by(order_id=order.id).first()
     line_id_is = re.sub('\D', '', str(stripe_pmt))
     strip_price = OrderLine.query.get(line_id_is)
+    order_user_id = order.user_id
+    user_email_address = User.query.get(order_user_id)
+    line_items = OrderLine.query.filter_by(order_id=order.id)
+    line_items_list = []
+    for line_item in line_items:
+        create_strp_price = stripe.Price.create(
+                                    unit_amount = int(float(line_item.unit_price_net)*100),
+                                    currency = "usd",
+                                    product = line_item.product_id)
+        create_strp_qnty = line_item.quantity
+        itm_dict = {}
+        itm_dict['price'] = create_strp_price
+        itm_dict['quantity'] = create_strp_qnty
+        line_items_list.append(itm_dict)
     try:
+        # stripe.ShippingRate.create(
+        #             display_name="Ground shipping",
+        #             type="fixed_amount",
+        #             fixed_amount={"amount": 500, "currency": "usd"})
         checkout_session = stripe.checkout.Session.create(
-        line_items=[
-            {
-                # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-                # 'price': 'price_1N4VYWJs9hh3tFE1lbS7ppli',
-                'price': strip_price.stripe_price_id,
-                'quantity': strip_price.quantity,
-            },
-        ],
-        mode='payment',
-        success_url= 'https://glenbertsfish.com' + '/orders/payment_success/' + str(token),
-        cancel_url= 'https://glenbertsfish.com' + '/orders/' + str(token),
-        automatic_tax={'enabled': True},
-        )
-        # if checkout_session.payment_status != 'unpaid':
-        #     print(checkout_session)
-        #     payment.pay_success(paid_at=datetime.now())
+            shipping_address_collection={"allowed_countries": ["US"]},
+              shipping_options=[
+                {
+                  "shipping_rate_data": {
+                    "type": "fixed_amount",
+                    "fixed_amount": {"amount": int(float(order.shipping_price_net)*100), "currency": "usd"},
+                    "display_name": order.shipping_method_name,
+                    "delivery_estimate": {
+                      "minimum": {"unit": "business_day", "value": 5},
+                      "maximum": {"unit": "business_day", "value": 7},
+                    },
+                  },
+                },
+              ],
+            line_items=line_items_list,
+            #     {
+            #
+            #
+            #         # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+            #         # 'price': 'price_1N4VYWJs9hh3tFE1lbS7ppli',
+            #         # 'price': strip_price.stripe_price_id,
+            #         # 'quantity': strip_price.quantity,
+            #
+            #         'price': stripe.Price.create(
+            #                                     unit_amount = int(float(order.total_net)*100),
+            #                                     currency = "usd",
+            #                                     product = "1"),
+            #         'quantity': strip_price.quantity,
+            #         # 'shipping_options.shipping_rate': stripe.ShippingRate.create(
+            #         #             display_name="Ground shipping",
+            #         #             type="fixed_amount",
+            #         #             fixed_amount={"amount": 500, "currency": "usd"})
+            #
+            #     },
+            # ],
+            customer_email = user_email_address.email,
+            mode = 'payment',
+            success_url = 'https://glenbertsfish.com' + '/orders/payment_success/' + str(token),
+            cancel_url = 'https://glenbertsfish.com' + '/orders/' + str(token),
+            automatic_tax = {'enabled': True},
+            )
+
+            # if checkout_session.payment_status != 'unpaid':
+            #     print(checkout_session)
+            #     payment.pay_success(paid_at=datetime.now())
     except Exception as e:
         return str(e)
     # if success_url is not None:
@@ -168,6 +215,7 @@ def payment_success(token):
     mail = Mail(current_app)
     mail.send(msg)
     # payment_no = request.args.get("success_url")
+    payment.pay_success(paid_at=datetime.now())
     # if payment:
     #     res = zhifubao.query_order(payment)
     #     if res["code"] == "303":
