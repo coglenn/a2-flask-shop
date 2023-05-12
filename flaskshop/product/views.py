@@ -2,6 +2,7 @@
 """Product views."""
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
 from flask_login import login_required
+from flask_babel import lazy_gettext
 from pluggy import HookimplMarker
 
 from flaskshop.checkout.models import Cart
@@ -29,6 +30,7 @@ def product_add_to_cart(id):
     if form.validate_on_submit():
         Cart.add_to_currentuser_cart(form.quantity.data, form.variant.data)
     else:
+        flash_errors(form)
         flash(lazy_gettext("Out of Stock"), "info")
     return redirect(url_for("product.show", id=id))
 
