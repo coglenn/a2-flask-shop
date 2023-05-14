@@ -3,7 +3,8 @@
 from flask_babel import lazy_gettext
 from flask_login import current_user
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField
+from flaskshop.constant import state_names
+from wtforms import PasswordField, StringField, SelectField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, Regexp
 
 from .models import User
@@ -165,7 +166,7 @@ class AddressForm(FlaskForm):
 
     zip_code = StringField(lazy_gettext("Zip Code"), validators=[DataRequired()])
     city = StringField(lazy_gettext("City"), validators=[DataRequired()])
-    state = StringField(lazy_gettext("State"), validators=[DataRequired()])
+    state = SelectField(lazy_gettext("State"), choices = state_names, validators=[DataRequired()])
     address = StringField(lazy_gettext("Address"), validators=[DataRequired()])
     contact_name = StringField(
         lazy_gettext("Contact name"), validators=[DataRequired()]

@@ -115,7 +115,7 @@
 
                     <div class="row no-print">
                         <div class="col-12">
-                            {% if order.status_human == "fulfilled" %}
+                            {% if order.status_human == "processing" %}
                             <a class="btn btn-success float-right"
                                 href="{{url_for('dashboard.send_order', id=order.id)}}">
                                 <i class="fa fa-credit-card"></i> {% trans %}Send Order{% endtrans %}

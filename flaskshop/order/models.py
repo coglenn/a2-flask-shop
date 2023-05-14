@@ -189,7 +189,7 @@ class Order(Model):
         return OrderPayment.query.filter_by(order_id=self.id).first()
 
     def pay_success(self, payment):
-        self.status = OrderStatusKinds.fulfilled.value
+        self.status = OrderStatusKinds.processing.value
         # to resolve another instance with key is already present in this session
         local_obj = db.session.merge(self)
         db.session.add(local_obj)

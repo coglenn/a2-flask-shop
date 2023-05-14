@@ -196,7 +196,7 @@ class ProductCreateForm(FlaskForm):
 
 class VariantForm(FlaskForm):
     sku_id = IntegerField(
-        lazy_gettext("SKU"), validators=[DataRequired(), NumberRange(min=1, max=9999)]
+        lazy_gettext("SKU"), validators=[DataRequired(), NumberRange(min=1, max=99999)]
     )
     title = StringField(lazy_gettext("Title"), validators=[DataRequired()])
     price_override = DecimalField(

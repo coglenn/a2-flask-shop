@@ -1,4 +1,4 @@
-import time, re, json
+import time, re, json, requests, base64
 from datetime import datetime
 
 from flask import (
@@ -16,8 +16,9 @@ from flask_login import current_user, login_required
 from flask_mail import Mail, Message
 from pluggy import HookimplMarker
 
-from flaskshop.account.models import User
-from flaskshop.constant import OrderStatusKinds, PaymentStatusKinds, ShipStatusKinds
+from flaskshop.account.models import User, UserAddress
+from flaskshop.product.models import ProductVariant, Product
+from flaskshop.constant import OrderStatusKinds, PaymentStatusKinds, ShipStatusKinds, get_state_abbrev
 from flaskshop.extensions import csrf_protect
 # from .payment import zhifubao
 import stripe
@@ -25,7 +26,7 @@ from .models import Order, OrderPayment, OrderLine
 
 
 stripe.api_key = 'sk_test_51N4QgvJs9hh3tFE1WZuvEtRkdsrvJzZnh4hlJMDE08snk478wGBuMpHvLFZlKtxK53XvAlP23YJqHl5F2wnjeYed0097p4sGbR'
-
+printful_key = 'ACt3yKX4ncluS3HUhjWjhBPcZQqKLeQXeRTj6KeO'
 
 impl = HookimplMarker("flaskshop")
 
@@ -46,6 +47,7 @@ def show(token):
 
 
 def create_payment(token, payment_method):
+    # print(printiful_order)
     order = Order.query.filter_by(token=token).first()
     if order.status != OrderStatusKinds.unfulfilled.value:
         abort(403, lazy_gettext("This Order Can Not Be Completed"))
@@ -71,6 +73,11 @@ def create_payment(token, payment_method):
         redirect_url = zhifubao.send_order(order.token, payment_no, order.total)
         payment.redirect_url = redirect_url
     return payment
+
+
+# def printiful_order(request):
+
+
 
 
 # @login_required
@@ -137,10 +144,6 @@ def test_pay_flow(token):
         itm_dict['quantity'] = create_strp_qnty
         line_items_list.append(itm_dict)
     try:
-        # stripe.ShippingRate.create(
-        #             display_name="Ground shipping",
-        #             type="fixed_amount",
-        #             fixed_amount={"amount": 500, "currency": "usd"})
         checkout_session = stripe.checkout.Session.create(
             shipping_address_collection={"allowed_countries": ["US"]},
               shipping_options=[
@@ -157,46 +160,25 @@ def test_pay_flow(token):
                 },
               ],
             line_items=line_items_list,
-            #     {
-            #
-            #
-            #         # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-            #         # 'price': 'price_1N4VYWJs9hh3tFE1lbS7ppli',
-            #         # 'price': strip_price.stripe_price_id,
-            #         # 'quantity': strip_price.quantity,
-            #
-            #         'price': stripe.Price.create(
-            #                                     unit_amount = int(float(order.total_net)*100),
-            #                                     currency = "usd",
-            #                                     product = "1"),
-            #         'quantity': strip_price.quantity,
-            #         # 'shipping_options.shipping_rate': stripe.ShippingRate.create(
-            #         #             display_name="Ground shipping",
-            #         #             type="fixed_amount",
-            #         #             fixed_amount={"amount": 500, "currency": "usd"})
-            #
-            #     },
-            # ],
             customer_email = user_email_address.email,
             mode = 'payment',
             success_url = 'https://glenbertsfish.com' + '/orders/payment_success/' + str(token),
             cancel_url = 'https://glenbertsfish.com' + '/orders/' + str(token),
             automatic_tax = {'enabled': True},
             )
-
-            # if checkout_session.payment_status != 'unpaid':
-            #     print(checkout_session)
-            #     payment.pay_success(paid_at=datetime.now())
     except Exception as e:
         return str(e)
-    # if success_url is not None:
-    #     payment.pay_success(paid_at=datetime.now())
-    # payment.pay_success(paid_at=datetime.now())
     # return redirect(url_for("order.payment_success"))
     return redirect(checkout_session.url, code=303)
 
 
 
+pnt_token = "ACt3yKX4ncluS3HUhjWjhBPcZQqKLeQXeRTj6KeO"
+url_base = "https://api.printful.com/"
+get_products_url = "https://api.printful.com/sync/products"
+# url = 'https://www.printful.com/oauth/'
+headers = {'Authorization': 'Bearer ' + pnt_token,
+            'Content-Type': 'application/json'}
 
 @login_required
 def payment_success(token):
@@ -214,18 +196,62 @@ def payment_success(token):
     msg.html = render_template("orders/order_email.html", order=order)
     mail = Mail(current_app)
     mail.send(msg)
-    # payment_no = request.args.get("success_url")
     payment.pay_success(paid_at=datetime.now())
-    # if payment:
-    #     res = zhifubao.query_order(payment)
-    #     if res["code"] == "303":
-    #         order_payment = OrderPayment.query.filter_by(
-    #             payment=res["out_trade_no"]
-    #         ).first()
-    #         order_payment.pay_success(paid_at=res["send_pay_date"])
-    #     else:
-    #         print(res["msg"])
 
+    line_items = OrderLine.query.filter_by(order_id=order.id)
+    get_usr_address = UserAddress.query.filter_by(user_id=order_user_id).first()
+    order_json = {
+        "recipient": {
+            "name": get_usr_address.contact_name,
+            "address1": get_usr_address.address,
+            "city": get_usr_address.city,
+            "state_name": get_usr_address.state,
+            "state_code": get_state_abbrev(get_usr_address.state),
+            "country_code": 'US',
+            "zip": get_usr_address.zip_code
+        },
+        "items": [{}],
+        "retail_costs": {
+            "currency": "USD",
+            "subtotal":  int(float(order.total_net)),
+            "discount":  int(float(order.discount_amount)),
+            "shipping":  int(float(order.shipping_price_net)),
+            },
+    }
+    # order_json['retail_costs'] = { "shipping": int(float(order.shipping_price_net)*100) }
+    items = []
+    for line_item in line_items:
+        cat_code = Product.get_by_id(line_item.product.id)
+        if cat_code.category_id is 2:
+            get_file_id = ProductVariant.get_by_id(line_item.variant.id)
+            item = {
+                "variant_id": line_item.product_sku.split('-')[1],
+                "quantity": line_item.quantity,
+                "retail_price": int(float(line_item.unit_price_net)),
+                "files": [{
+                        "id": line_item.stripe_price_id,
+                            }]
+            }
+            items.append(item)
+    order_json['items'] = items
+    url = 'https://api.printful.com/orders'
+    headers = {'Authorization': 'Bearer ' + pnt_token,
+                'Content-Type': 'application/json'}
+    try:
+        get_resp = requests.get(get_products_url, headers=headers)
+        # print(get_resp)
+        # print(json.dumps(printful_request.json(),indent=4))
+        response = requests.post(url, data=json.dumps(order_json),
+                                 headers=headers)
+        # response = requests.post(url, data=jimport,
+        #                          headers=headers)
+        # print("get_resp = ", get_resp.status_code, get_resp.text)
+        # print("response = ", response.status_code, response.text)
+        # return True, response
+    except requests.exceptions.RequestException as e:
+        print("ERROR: When submitting order with requests, "
+              "error message: %s" % str(e))
+        return False, e
     return render_template("orders/checkout_success.html", order=order)
 
 

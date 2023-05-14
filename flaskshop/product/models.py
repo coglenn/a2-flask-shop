@@ -474,7 +474,7 @@ class ProductVariant(Model):
 
     def check_enough_stock(self, quantity):
         if self.stock < quantity:
-            return False, f"{self.display_product()} has not enough stock"
+            return False, f"{self.display_product()} not enough stock"
         return True, "success"
 
     @staticmethod
