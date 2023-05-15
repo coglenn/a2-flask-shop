@@ -162,7 +162,7 @@ def test_pay_flow(token):
             line_items=line_items_list,
             customer_email = user_email_address.email,
             mode = 'payment',
-            success_url = 'http://127.0.0.1:5000' + '/orders/payment_success/' + str(token),
+            success_url = 'http://glenbertsfish.com' + '/orders/payment_success/' + str(token),
             cancel_url = 'https://glenbertsfish.com' + '/orders/' + str(token),
             automatic_tax = {'enabled': True},
             )
