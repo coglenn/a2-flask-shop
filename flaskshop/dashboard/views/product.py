@@ -274,8 +274,15 @@ def product_manage(id=None):
         del form.attributes
         form.populate_obj(product)
         product.save()
-        if not InvalidRequestError is True:
+        if not InvalidRequestError:
             stripe.Product.create(id=str(product.id), name=form.title.data)
+        if InvalidRequestError is True:
+            stripe.Product.modify(
+                str(product.id),
+                name=form.title.data,
+                # default_price=form.stripe_price_id.data,
+                active=form.on_sale.data,
+                )
         upload_imgs = request.files.getlist("new_images")
         for img in upload_imgs:
             # request.files.getlist always not return empty, even not upload files

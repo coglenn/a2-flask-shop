@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
+from flask import abort, Blueprint, flash, jsonify, redirect, render_template, request, url_for
 from flask_babel import lazy_gettext
 from flask_login import current_user, login_required
 from pluggy import HookimplMarker
@@ -50,10 +50,10 @@ def checkout_shipping():
         elif request.form["address_sel"] == "new" and form.validate_on_submit():
             user_address = UserAddress.create(
                 contact_name=form.contact_name.data,
-                contact_phone=form.contact_phone.data,                
+                contact_phone=form.contact_phone.data,
                 address=form.address.data,
                 city=form.city.data,
-                state=form.state.data,                
+                state=form.state.data,
                 zip_code=form.zip_code.data,
                 user_id=current_user.id,
             )
@@ -78,30 +78,33 @@ def checkout_note():
     form = NoteForm(request.form)
     voucher_form = VoucherForm(request.form)
     cart = Cart.get_current_user_cart()
-    address = (
-        UserAddress.get_by_id(cart.shipping_address_id)
-        if cart.shipping_address_id
-        else None
-    )
-    shipping_method = (
-        ShippingMethod.get_by_id(cart.shipping_method_id)
-        if cart.shipping_method_id
-        else None
-    )
-    if form.validate_on_submit():
-        order, msg = Order.create_whole_order(cart, form.note.data)
-        if order:
-            return redirect(order.get_absolute_url())
-        else:
-            flash(msg, "warning")
-            return redirect(url_for("checkout.cart_index"))
-    return render_template(
-        "checkout/note.html",
-        form=form,
-        address=address,
-        voucher_form=voucher_form,
-        shipping_method=shipping_method,
-    )
+    if cart is None:
+        abort(403, lazy_gettext("Your Cart is Empty!"))
+    else:
+        address = (
+            UserAddress.get_by_id(cart.shipping_address_id)
+            if cart.shipping_address_id
+            else None
+        )
+        shipping_method = (
+            ShippingMethod.get_by_id(cart.shipping_method_id)
+            if cart.shipping_method_id
+            else None
+        )
+        if form.validate_on_submit():
+            order, msg = Order.create_whole_order(cart, form.note.data)
+            if order:
+                return redirect(order.get_absolute_url())
+            else:
+                flash(msg, "warning")
+                return redirect(url_for("checkout.cart_index"))
+        return render_template(
+            "checkout/note.html",
+            form=form,
+            address=address,
+            voucher_form=voucher_form,
+            shipping_method=shipping_method,
+        )
 
 
 def checkout_voucher():

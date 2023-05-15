@@ -17,8 +17,8 @@ from flask_mail import Mail, Message
 from pluggy import HookimplMarker
 
 from flaskshop.account.models import User, UserAddress
-from flaskshop.product.models import ProductVariant, Product
-from flaskshop.constant import OrderStatusKinds, PaymentStatusKinds, ShipStatusKinds, get_state_abbrev
+from flaskshop.product.models import ProductVariant, Product, AttributeChoiceValue
+from flaskshop.constant import OrderStatusKinds, PaymentStatusKinds, ShipStatusKinds, get_state_abbrev, get_color
 from flaskshop.extensions import csrf_protect
 # from .payment import zhifubao
 import stripe
@@ -162,7 +162,7 @@ def test_pay_flow(token):
             line_items=line_items_list,
             customer_email = user_email_address.email,
             mode = 'payment',
-            success_url = 'http://glenbertsfish.com' + '/orders/payment_success/' + str(token),
+            success_url = 'https://glenbertsfish.com' + '/orders/payment_success/' + str(token),
             cancel_url = 'https://glenbertsfish.com' + '/orders/' + str(token),
             automatic_tax = {'enabled': True},
             )
@@ -195,9 +195,8 @@ def payment_success(token):
                 )
     msg.html = render_template("orders/order_email.html", order=order)
     mail = Mail(current_app)
-    # mail.send(msg)
-    # payment.pay_success(paid_at=datetime.now())
-
+    mail.send(msg)
+    payment.pay_success(paid_at=datetime.now())
     line_items = OrderLine.query.filter_by(order_id=order.id)
     get_usr_address = UserAddress.query.filter_by(user_id=order_user_id).first()
     order_json = {
@@ -222,6 +221,13 @@ def payment_success(token):
     items = []
     for line_item in line_items:
         cat_code = Product.get_by_id(line_item.product.id)
+        print(cat_code.attributes)
+        if '13' in cat_code.attributes:
+            print()
+            embro_color = AttributeChoiceValue.query.filter_by(id=cat_code.attributes['13']).first()
+            color = get_color(embro_color.title)
+        else:
+            color = None
         if cat_code.category_id == 2:
             get_file_id = ProductVariant.get_by_id(line_item.variant.id)
             item = {
@@ -232,24 +238,22 @@ def payment_success(token):
                         "id": line_item.stripe_price_id,
                             }],
                 "options" : [
-                       {
-                          "id" : "embroidery_type",
-                          "value" : "flat"
-                       },
+                       # {
+                       #    "id" : "embroidery_type",
+                       #    "value" : "flat"
+                       # },
                        {
                           "id" : "thread_colors",
-                          "value" : ["#FFFFFF"]
+                          "value" : [color]
                        },
-                       {
-                          "id" : "text_thread_colors",
-                          "value" : []
-                       },
-                       {
-                          "id" : "thread_colors_3d",
-                          "value" : [
-                             "#FFFFFF"
-                          ]
-                       }
+                       # {
+                       #    "id" : "text_thread_colors",
+                       #    "value" : []
+                       # },
+                       # {
+                       #    "id" : "thread_colors_3d",
+                       #    "value" : ["#FFFFFF"]
+                       # },
                     ],
             }
 

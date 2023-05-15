@@ -127,3 +127,30 @@ def get_state_abbrev(state):
         if value==state:
             return abbrev
     return('abbrev Not Found')
+
+
+colors_list = {
+    'White': '#FFFFFF',
+    'Black': '#000000',
+    'Grey': '#96A1A8',
+    'Old Gold': '#A67843',
+    'Gold': '#FFCC00',
+    'Orange': '#E25C27',
+    'Flamingo': '#CC3366',
+    'Red': '#CC3333',
+    'Maroon': '#660000',
+    'Navy': '#333366',
+    'Royal': '#005397',
+    'Aqua-Teal': '#3399FF',
+    'Purple': '#6B5294',
+    'Kelly Green': '#01784E',
+    'Kiwi Green': '#7BA35A',
+}
+
+colors = dict(map(reversed, colors_list.items()))
+
+def get_color(color):
+    for col, value in colors.items():
+        if value==color:
+            return col
+    return('color Not Found')
