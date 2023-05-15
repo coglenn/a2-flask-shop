@@ -162,7 +162,7 @@ def test_pay_flow(token):
             line_items=line_items_list,
             customer_email = user_email_address.email,
             mode = 'payment',
-            success_url = 'https://glenbertsfish.com' + '/orders/payment_success/' + str(token),
+            success_url = 'http://127.0.0.1:5000' + '/orders/payment_success/' + str(token),
             cancel_url = 'https://glenbertsfish.com' + '/orders/' + str(token),
             automatic_tax = {'enabled': True},
             )
@@ -195,8 +195,8 @@ def payment_success(token):
                 )
     msg.html = render_template("orders/order_email.html", order=order)
     mail = Mail(current_app)
-    mail.send(msg)
-    payment.pay_success(paid_at=datetime.now())
+    # mail.send(msg)
+    # payment.pay_success(paid_at=datetime.now())
 
     line_items = OrderLine.query.filter_by(order_id=order.id)
     get_usr_address = UserAddress.query.filter_by(user_id=order_user_id).first()
@@ -222,7 +222,7 @@ def payment_success(token):
     items = []
     for line_item in line_items:
         cat_code = Product.get_by_id(line_item.product.id)
-        if cat_code.category_id is 2:
+        if cat_code.category_id == 2:
             get_file_id = ProductVariant.get_by_id(line_item.variant.id)
             item = {
                 "variant_id": line_item.product_sku.split('-')[1],
@@ -230,8 +230,29 @@ def payment_success(token):
                 "retail_price": int(float(line_item.unit_price_net)),
                 "files": [{
                         "id": line_item.stripe_price_id,
-                            }]
+                            }],
+                "options" : [
+                       {
+                          "id" : "embroidery_type",
+                          "value" : "flat"
+                       },
+                       {
+                          "id" : "thread_colors",
+                          "value" : ["#FFFFFF"]
+                       },
+                       {
+                          "id" : "text_thread_colors",
+                          "value" : []
+                       },
+                       {
+                          "id" : "thread_colors_3d",
+                          "value" : [
+                             "#FFFFFF"
+                          ]
+                       }
+                    ],
             }
+
             items.append(item)
     order_json['items'] = items
     url = 'https://api.printful.com/orders'
@@ -246,8 +267,8 @@ def payment_success(token):
         # response = requests.post(url, data=jimport,
         #                          headers=headers)
         # print("get_resp = ", get_resp.status_code, get_resp.text)
-        # print("response = ", response.status_code, response.text)
-        # return True, response
+        print("response = ", response.status_code, response.text)
+        return True, response
     except requests.exceptions.RequestException as e:
         print("ERROR: When submitting order with requests, "
               "error message: %s" % str(e))

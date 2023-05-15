@@ -265,7 +265,7 @@ def product_manage(id=None):
         product_type_id = request.args.get("product_type_id", 1, int)
         product_type = ProductType.get_by_id(product_type_id)
         product = Product(product_type_id=product_type_id)
-        stripe.Product.create(id=product.id, name=product.title)
+        # stripe.Product.create(id=product.id, name=product.title)
     form.category_id.choices = [(c.id, c.title) for c in Category.query.all()]
     if form.validate_on_submit():
         product.update_images(form.images.data)
@@ -274,6 +274,8 @@ def product_manage(id=None):
         del form.attributes
         form.populate_obj(product)
         product.save()
+        if not InvalidRequestError is True:
+            stripe.Product.create(id=str(product.id), name=form.title.data)
         upload_imgs = request.files.getlist("new_images")
         for img in upload_imgs:
             # request.files.getlist always not return empty, even not upload files
@@ -284,8 +286,9 @@ def product_manage(id=None):
                 product_id=product.id,
             )
         # product_type_id = request.args.get("product_type_id", 1, int)
+        product_id_stripe = Product.query.get(product.id)
 
-        print(form.title)
+        print(product_id_stripe.title)
         flash(lazy_gettext("Product saved."), "success")
         return redirect(url_for("dashboard.product_detail", id=product.id))
     context = {"form": form, "product_type": product_type}

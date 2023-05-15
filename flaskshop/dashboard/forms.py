@@ -166,7 +166,7 @@ class ProductTypeForm(FlaskForm):
 
 
 class ProductForm(FlaskForm):
-    title = StringField(lazy_gettext("Title"))
+    title = StringField(lazy_gettext("Title"), validators=[DataRequired()])
     stripe_price_id = StringField(lazy_gettext("Stripe Price ID"))
     basic_price = DecimalField(lazy_gettext("Basic Price"))
     on_sale = BooleanField(lazy_gettext("On Sale"), default=True)
