@@ -41,8 +41,8 @@ from pathlib import Path
 
 class DBConfig:
     db_type = os.getenv("DB_TYPE", "postgresql")
-    user = os.getenv("DB_USER", "glenbert_colt")
-    passwd = os.getenv("DB_PASSWD", "Nelly3253")
+    user = os.getenv("DB_USER", "DB_USER")
+    passwd = os.getenv("DB_PASSWD", "DB_PASSWD")
     host = os.getenv("DB_HOST", "localhost")
     port = os.getenv("DB_PORT", 5432)
     db_name = os.getenv("DB_NAME", "glenbert_flaskshop")
