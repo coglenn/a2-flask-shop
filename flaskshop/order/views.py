@@ -271,8 +271,8 @@ def payment_success(token):
         # response = requests.post(url, data=jimport,
         #                          headers=headers)
         # print("get_resp = ", get_resp.status_code, get_resp.text)
-        print("response = ", response.status_code, response.text)
-        return True, response
+        # print("response = ", response.status_code, response.text)
+        # return True, response
     except requests.exceptions.RequestException as e:
         print("ERROR: When submitting order with requests, "
               "error message: %s" % str(e))
