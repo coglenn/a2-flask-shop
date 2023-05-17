@@ -1,2 +1,4 @@
 flask-shop
 .env
+slow_queries,log
+slow_queries.log
