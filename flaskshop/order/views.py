@@ -1,4 +1,4 @@
-import time, re, json, requests, base64
+import time, re, json, requests, base64, os
 from datetime import datetime
 
 from flask import (
@@ -25,8 +25,8 @@ import stripe
 from .models import Order, OrderPayment, OrderLine
 
 
-stripe.api_key = 'sk_test_51N4QgvJs9hh3tFE1WZuvEtRkdsrvJzZnh4hlJMDE08snk478wGBuMpHvLFZlKtxK53XvAlP23YJqHl5F2wnjeYed0097p4sGbR'
-printful_key = 'ACt3yKX4ncluS3HUhjWjhBPcZQqKLeQXeRTj6KeO'
+stripe.api_key = os.getenv('stripe_api_key')
+
 
 impl = HookimplMarker("flaskshop")
 
@@ -173,7 +173,7 @@ def test_pay_flow(token):
 
 
 
-pnt_token = "ACt3yKX4ncluS3HUhjWjhBPcZQqKLeQXeRTj6KeO"
+pnt_token = os.getenv('pnt_token')
 url_base = "https://api.printful.com/"
 get_products_url = "https://api.printful.com/sync/products"
 # url = 'https://www.printful.com/oauth/'
@@ -221,9 +221,8 @@ def payment_success(token):
     items = []
     for line_item in line_items:
         cat_code = Product.get_by_id(line_item.product.id)
-        print(cat_code.attributes)
+        # print(cat_code.attributes)
         if '13' in cat_code.attributes:
-            print()
             embro_color = AttributeChoiceValue.query.filter_by(id=cat_code.attributes['13']).first()
             color = get_color(embro_color.title)
         else:
@@ -237,23 +236,10 @@ def payment_success(token):
                 "files": [{
                         "id": line_item.stripe_price_id,
                             }],
-                "options" : [
-                       # {
-                       #    "id" : "embroidery_type",
-                       #    "value" : "flat"
-                       # },
-                       {
+                "options" : [{
                           "id" : "thread_colors",
                           "value" : [color]
                        },
-                       # {
-                       #    "id" : "text_thread_colors",
-                       #    "value" : []
-                       # },
-                       # {
-                       #    "id" : "thread_colors_3d",
-                       #    "value" : ["#FFFFFF"]
-                       # },
                     ],
             }
 
@@ -263,7 +249,7 @@ def payment_success(token):
     headers = {'Authorization': 'Bearer ' + pnt_token,
                 'Content-Type': 'application/json'}
     try:
-        get_resp = requests.get(get_products_url, headers=headers)
+        # get_resp = requests.get(get_products_url, headers=headers)
         # print(get_resp)
         # print(json.dumps(printful_request.json(),indent=4))
         response = requests.post(url, data=json.dumps(order_json),
@@ -271,8 +257,8 @@ def payment_success(token):
         # response = requests.post(url, data=jimport,
         #                          headers=headers)
         # print("get_resp = ", get_resp.status_code, get_resp.text)
-        print("response = ", response.status_code, response.text)
-        return True, response
+        # print("response = ", response.status_code, response.text)
+        # return True, response
     except requests.exceptions.RequestException as e:
         print("ERROR: When submitting order with requests, "
               "error message: %s" % str(e))

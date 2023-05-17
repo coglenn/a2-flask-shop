@@ -2,39 +2,35 @@
 """Application configuration."""
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # if os.environ['ENV'] == 'dev':
 #     ENV = "dev"
 
+def configure():
+    load_dotenv()
+
 class DBConfig:
-    # if os.environ['FLASK_ENV'] == 'development':
-    #     db_type = os.getenv("DB_TYPE", "mysql")
-    #     user = os.getenv("DB_USER", "root")
-    #     passwd = os.getenv("DB_PASSWD", "Nelly3253")
-    #     host = os.getenv("DB_HOST", "127.0.0.1")
-    #     port = os.getenv("DB_PORT", 3306)
-    #     db_name = os.getenv("DB_NAME", "flaskshop")
-    #     if db_type == "postgresql":
-    #         db_uri = f"postgresql://{user}:{passwd}@{host}:{port}/{db_name}"
-    #     elif db_type == "mysql":
-    #         db_uri = (
-    #             f"mysql+pymysql://{user}:{passwd}@{host}:{port}/{db_name}?charset=utf8mb4"
-    #         )
-    #     redis_uri = "redis://localhost:6379"
-    #     esearch_uri = "localhost"
-    # else:
+    if os.environ['FLASK_ENV'] == 'development':
+        db_type = os.getenv("DB_TYPE", "mysql")
+        user = os.getenv("DB_USER", "root")
+        passwd = os.getenv("DB_PASSWD", "pass")
+        host = os.getenv("DB_HOST", "127.0.0.1")
+        port = os.getenv("DB_PORT", 'DB_PORT')
+        db_name = os.getenv("DB_NAME", "flaskshop")
+        db_uri = (
+            f"mysql+pymysql://{user}:{passwd}@{host}:{port}/{db_name}?charset=utf8mb4"
+        )
+        redis_uri = "redis://localhost:6379"
+        esearch_uri = "localhost"
+    else:
         db_type = os.getenv("DB_TYPE", "postgresql")
         user = os.getenv("DB_USER", "DB_USER")
         passwd = os.getenv("DB_PASSWD", "DB_PASSWD")
         host = os.getenv("DB_HOST", "localhost")
         port = os.getenv("DB_PORT", 5432)
         db_name = os.getenv("DB_NAME", "DB_NAME")
-        if db_type == "postgresql":
-            db_uri = f"postgresql://{user}:{passwd}@{host}:{port}/{db_name}"
-        elif db_type == "mysql":
-            db_uri = (
-                f"mysql+pymysql://{user}:{passwd}@{host}:{port}/{db_name}?charset=utf8mb4"
-            )
+        db_uri = f"postgresql://{user}:{passwd}@{host}:{port}/{db_name}"
         redis_uri = "redis://localhost:6379"
         esearch_uri = "localhost"
 
@@ -59,7 +55,8 @@ class DBConfig:
 class Config:
     ENV = "development"
     FLASK_DEBUG = False
-    SECRET_KEY = os.getenv("SECRET_KEY", "thisisashop")
+    configure()
+    SECRET_KEY = os.getenv("SECRET_KEY", "SECRET_KEY")
 
     # Redis
     # if redis is enabled, it can be used for:
@@ -109,12 +106,12 @@ class Config:
     )
     BABEL_CURRENCY = os.getenv("BABEL_CURRENCY", "USD")
 
-    MAIL_SERVER = os.getenv("MAIL_SERVER", "mail.glenbertsfish.com")
+    MAIL_SERVER = os.getenv("MAIL_SERVER", "MAIL_SERVER")
     MAIL_PORT = os.getenv("MAIL_PORT", 587)
     MAIL_TLS = os.getenv("MAIL_TLS", True)
     MAIL_SSL = os.getenv("MAIL_SSL", True)
-    MAIL_USERNAME = os.getenv("MAIL_USERNAME", "orders@glenbertsfish.com")
-    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD", "Nelly3253")
+    MAIL_USERNAME = os.getenv("MAIL_USERNAME", "MAIL_USERNAME")
+    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD", "MAIL_PASSWORD")
 
     GA_MEASUREMENT_ID = os.getenv("GA_MEASUREMENT_ID", "")
 

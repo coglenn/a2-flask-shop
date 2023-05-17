@@ -21,9 +21,9 @@ from flaskshop.product.models import (
 )
 from flaskshop.dashboard.utils import save_img_file, wrap_partial, item_del
 from stripe.error import InvalidRequestError
-import stripe
+import stripe, os
 
-stripe.api_key = 'sk_test_51N4QgvJs9hh3tFE1WZuvEtRkdsrvJzZnh4hlJMDE08snk478wGBuMpHvLFZlKtxK53XvAlP23YJqHl5F2wnjeYed0097p4sGbR'
+stripe.api_key = os.getenv('stripe_api_key')
 
 
 def attributes():
@@ -295,7 +295,7 @@ def product_manage(id=None):
         # product_type_id = request.args.get("product_type_id", 1, int)
         product_id_stripe = Product.query.get(product.id)
 
-        print(product_id_stripe.title)
+        # print(product_id_stripe.title)
         flash(lazy_gettext("Product saved."), "success")
         return redirect(url_for("dashboard.product_detail", id=product.id))
     context = {"form": form, "product_type": product_type}
