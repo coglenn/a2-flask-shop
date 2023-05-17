@@ -11,7 +11,7 @@ def configure():
     load_dotenv()
 
 class DBConfig:
-    if os.environ['FLASK_ENV'] == 'development':
+    if os.getenv('FLASK_ENV') == 'development':
         db_type = os.getenv("DB_TYPE", "mysql")
         user = os.getenv("DB_USER", "root")
         passwd = os.getenv("DB_PASSWD", "pass")
