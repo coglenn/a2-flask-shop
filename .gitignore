@@ -1,4 +1,16 @@
 flask-shop
 .env
-slow_queries,log
 slow_queries.log
+
+# Packages
+*.egg
+*.egg-info
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
