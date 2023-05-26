@@ -10,30 +10,42 @@ from dotenv import load_dotenv
 def configure():
     load_dotenv()
 
-class DBConfig:
-    if os.getenv('FLASK_ENV') == 'development':
-        db_type = os.getenv("DB_TYPE", "mysql")
-        user = os.getenv("DB_USER", "root")
-        passwd = os.getenv("DB_PASSWD", "pass")
-        host = os.getenv("DB_HOST", "127.0.0.1")
-        port = os.getenv("DB_PORT", 'DB_PORT')
-        db_name = os.getenv("DB_NAME", "flaskshop")
-        db_uri = (
-            f"mysql+pymysql://{user}:{passwd}@{host}:{port}/{db_name}?charset=utf8mb4"
-        )
-        redis_uri = "redis://localhost:6379"
-        esearch_uri = "localhost"
-    else:
-        db_type = os.getenv("DB_TYPE", "postgresql")
-        user = os.getenv("DB_USER", "DB_USER")
-        passwd = os.getenv("DB_PASSWD", "DB_PASSWD")
-        host = os.getenv("DB_HOST", "localhost")
-        port = os.getenv("DB_PORT", 5432)
-        db_name = os.getenv("DB_NAME", "DB_NAME")
-        db_uri = f"postgresql://{user}:{passwd}@{host}:{port}/{db_name}"
-        redis_uri = "redis://localhost:6379"
-        esearch_uri = "localhost"
+# class DBConfig:
+#     if os.getenv('FLASK_ENV') == 'development':
+#         db_type = os.getenv("DB_TYPE", "mysql")
+#         user = os.getenv("DB_USER", "root")
+#         passwd = os.getenv("DB_PASSWD", "pass")
+#         host = os.getenv("DB_HOST", "127.0.0.1")
+#         port = os.getenv("DB_PORT", 'DB_PORT')
+#         db_name = os.getenv("DB_NAME", "flaskshop")
+#         db_uri = (
+#             f"mysql+pymysql://{user}:{passwd}@{host}:{port}/{db_name}?charset=utf8mb4"
+#         )
+#         redis_uri = "redis://localhost:6379"
+#         esearch_uri = "localhost"
+#     else:
+#         db_type = os.getenv("DB_TYPE", "postgresql")
+#         user = os.getenv("DB_USER", "DB_USER")
+#         passwd = os.getenv("DB_PASSWD", "DB_PASSWD")
+#         host = os.getenv("DB_HOST", "localhost")
+#         port = os.getenv("DB_PORT", 5432)
+#         db_name = os.getenv("DB_NAME", "DB_NAME")
+#         db_uri = f"postgresql://{user}:{passwd}@{host}:{port}/{db_name}"
+#         redis_uri = "redis://localhost:6379"
+#         esearch_uri = "localhost"
 
+class DBConfig:
+    db_type = os.getenv("DB_TYPE", "mysql")
+    user = os.getenv("DB_USER", "root")
+    passwd = os.getenv("DB_PASSWD", "pass")
+    host = os.getenv("DB_HOST", "127.0.0.1")
+    port = os.getenv("DB_PORT", 'DB_PORT')
+    db_name = os.getenv("DB_NAME", "flaskshop")
+    db_uri = (
+        f"mysql+pymysql://{user}:{passwd}@{host}:{port}/{db_name}?charset=utf8mb4"
+    )
+    redis_uri = "redis://localhost:6379"
+    esearch_uri = "localhost"
 
 # class DBConfig:
 #     db_type = os.getenv("DB_TYPE", "postgresql")

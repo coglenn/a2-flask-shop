@@ -18,9 +18,10 @@ from wtforms import (
     StringField,
     SubmitField,
     TextAreaField,
+    TimeField,
 )
 from wtforms.validators import DataRequired, Length, NumberRange, Regexp, optional
-
+from datetime import datetime
 from flaskshop.constant import Permission, SettingValueType
 
 
@@ -361,3 +362,34 @@ def generate_settings_form(settings):
 
     SettingsForm.submit = SubmitField(lazy_gettext("Submit"))
     return SettingsForm
+
+class TicketCreateForm(FlaskForm):
+    tide_am_pm = RadioField(
+        lazy_gettext("AM or PM"),
+        choices=[
+            ('AM', lazy_gettext("AM")),
+            ('PM', lazy_gettext("PM")),
+        ],
+    )
+    submit = SubmitField(lazy_gettext("Next"))
+
+class TicketEntryForm(FlaskForm):
+    entry_date = DateTimeField(lazy_gettext("Date"), validators=[DataRequired()], format='%m-%d-%Y', default=datetime.now())
+    set_time = TimeField(lazy_gettext("Set Time"), validators=[DataRequired()])
+    submit = SubmitField(lazy_gettext("Submit"))
+
+class TicketForm(FlaskForm):
+    landing_num = StringField(lazy_gettext("Landing #"), validators=[DataRequired()])
+    weight = IntegerField(lazy_gettext("Weight"), default=0)    
+    permit_num = RadioField(
+        lazy_gettext("Select Permit"),
+        choices=[
+            ("Colt - 60021C", lazy_gettext("Colt - 60021C")),
+            ("Adisen - 59866L", lazy_gettext("Adisen - 59866L")),
+            ("Jed - 61279W", lazy_gettext("Jed - 61279W")),
+        ],
+        default=0,
+    )
+    landing_time = TimeField(lazy_gettext("Landing Time"))
+    ticket_notes = TextAreaField(lazy_gettext("Notes"))
+    submit = SubmitField(lazy_gettext("Submit"))   

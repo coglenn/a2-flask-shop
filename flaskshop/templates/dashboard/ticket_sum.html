@@ -1,0 +1,88 @@
+{% extends 'dashboard/layout.html' %}
+
+{% block body %}
+    <section>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-box mb-3">
+                            <!-- <span class="info-box-icon bg-success"><i
+                                    class="fa fa-shopping-cart"></i></span> -->
+                                <div class="info-box-content">
+                                    <span class="info-box-text">{% trans %}Deliveries Today{% endtrans %}</span>
+                                    <span class="info-box-text"><b>{{ deliveries_today }}</b> {% trans %}today
+                                        and{% endtrans %} <b>{{ total_weight }}</b>
+                                        {% trans %}Total Deliveries{% endtrans %}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-box mb-3">
+                                <!-- <span class="info-box-icon bg-warning"><i class="fa fa-users"></i></span> -->
+                                <div class="info-box-content">
+                                    <span class="info-box-text">{% trans %}Members{% endtrans %}</span>
+                                    <span class="info-box-text"><b>{{ users_today }}</b> {% trans %}new in{% endtrans %}
+                                        <b>{{ users_total }}</b>
+                                        {% trans %}accounts{% endtrans %}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    "Tides_total": TicketEntry.query.count(),
+        "deliveries_today": tickets,
+        "users_total": User.query.count(),
+        "total_deliveries": Ticket.query.count(),
+                    <div class="card">
+                        <div class="card-body p-0">
+                            <ul class="navi-card">
+                                <li class="item">
+                                    {{ '%04d' % total_deliveries }}
+                                </li>
+                                <li class="item">
+                                    {{ Tides_total }} {% trans %}Total Tides Fished{% endtrans %}
+                                </li>
+                                <li class="item">
+
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="card-title">{% trans %}Top Products{% endtrans %}</h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="products-list product-list-in-card px-9">
+                                    <li class="item">
+                                        <div class="product-info">
+
+                                            <span class="product-description">
+                                                {{ "{:,}".format(total_weight) }}
+                                            </span>
+                                            <span class="product-description">
+                                                {{ "{:,}".format(max_deliv) }} {% trans %}Biggest Delivery{% endtrans %}
+                                            </span>
+                                        </div>
+                                    </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="card-title">{% trans %}Activity{% endtrans %}</h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="activity product-list-in-card px-2">
+   
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
