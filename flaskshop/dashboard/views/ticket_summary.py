@@ -32,7 +32,7 @@ def index_ticket():
     tickets = get_today_num(Ticket)
 
     weight = Ticket.query.all()
-    # complete_weight = Ticket.query()
+    complete_weight = Ticket.query()
     we = 0
     for w in weight:
         we += w.weight
