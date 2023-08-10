@@ -1,4 +1,4 @@
-from flask import request, url_for
+from flask import request, url_for, current_app
 from datetime import datetime
 from flaskshop.constant import SettingValueType
 from flaskshop.database import Column, Model, db
@@ -6,7 +6,25 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from flask_sqlalchemy import SQLAlchemy
+import json
 
+
+def dumpclean(obj):
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if hasattr(v, '__iter__'):
+                print(k)
+                dumpclean(v)
+            else:
+                print('%s : %s' % (k, v))
+    elif isinstance(obj, list):
+        for v in obj:
+            if hasattr(v, '__iter__'):
+                dumpclean(v)
+            else:
+                print(v)
+    else:
+        print(obj)
 
 class DashboardMenu(Model):
     __tablename__ = "management_dashboard"
@@ -89,8 +107,8 @@ class TicketEntry(Model):
     def __str__(self):
         return self.id
     
-    def __iter__(self):
-        return iter(self.ticket)
+    # def __iter__(self):
+    #     return iter(self.ticket)
 
     @property
     def title(self):
@@ -110,6 +128,57 @@ class TicketEntry(Model):
         return we
 
 
+
+
+    @property
+    def permit_weights(self):
+        permits = Ticket.query.filter(Ticket.ticket_entry_id == self.id)
+        permits_list = []
+        permit_l = []
+        we = 0   
+        # for p in permits:
+        #     if p.permit_num not in permits_list:  
+        #         permits_list.append(p.permit_num)
+        for w in permits:
+                weight = w.weight
+                permit = w.permit_num
+                permits_list.append((permit, weight))
+                permit_l.append(permit)
+        permit_totals = {}        
+        for weight, value in permits_list:
+            total = permit_totals.get(weight, 0) + value
+            permit_totals[weight] = total  
+        print(dumpclean(permit_totals))
+        # for item in permit_totals:
+        #     print(item.values())
+        return permit_totals
+        # for item in permit_l:
+        #     # print(item)
+        #     print(permit_totals[str(item)])
+            
+                
+        for w in permits_list:
+            print(w.permit_num)        
+            # if permits.permit_num == w:
+        #         we += permits.weight
+        #         print(we)
+        # return we   
+        
+        # print(permits_list)     
+        for perm in permits_list:
+            print(permits.permit_num)
+            # if permits.permit_num == perm:
+            #     print(perm)
+            #     we += perm.weight
+            # print(we)
+        # return we
+        # complete_weight = Ticket.query()
+        # we = 0
+        # for w in weight:
+        #     we += w.weight
+        # return we
+
+
 class Ticket(Model):
     __tablename__ = "ticket_ticket"
     landing_num = Column(db.String(20))
@@ -123,9 +192,35 @@ class Ticket(Model):
     # def __int__(self):
     #     return self.landing_num
     
+    def __int__(self):
+        return self.id
+    
     def get_total_weight(self):
         return self.weight
     
     @property
     def ticket(self):
         return TicketEntry.get_by_id(self.ticket_entry_id)
+
+    # @property
+    # def title(self):
+    #     return str(self.entry_date.strftime("%a, %B %d, %Y")) + ' - ' + str('AM Tide')
+    
+    # def delete(self):
+    #     need_del = Ticket.query.filter_by(id=self.id).all()
+    #     for item in need_del:
+    #         item.delete(commit=False)
+    #     db.session.delete(self)
+    #     db.session.commit()
+
+    # @classmethod
+    # def __flush_delete_event__(cls, target):
+
+    #     super().__flush_delete_event__(target)
+    #     target.clear_mc(target)
+    #     target.clear_category_cache(target)
+
+    #     if current_app.config["USE_ES"]:
+    #         from flaskshop.public.search import Item
+
+    #         Item.delete(target)

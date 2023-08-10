@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>The Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">  
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://unpkg.com/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <link href="https://unpkg.com/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
     <link href="https://unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='dashboard/index.css') }}">
     {% block head_tail %}
     {% endblock %}

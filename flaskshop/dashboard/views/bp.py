@@ -67,7 +67,7 @@ from .ticket import (
     ticket_del,
 )
 
-from .ticket_summary import index_ticket
+from .ticket_summary import index_ticket, ticket_graph, tide_graph, index_ticket_23
 from .user import address_edit, user, user_edit, user_del, users
 
 impl = HookimplMarker("flaskshop")
@@ -248,7 +248,7 @@ def flaskshop_load_blueprints(app):
     bp.add_url_rule("/sales/<id>/edit", view_func=sales_manage, methods=["GET", "POST"])
     bp.add_url_rule("/sales/<int:id>/delete", view_func=sale_del, methods=["DELETE"])
 
-    bp.add_url_rule("/ticket", view_func=tickets)
+    bp.add_url_rule("/tickets", view_func=tickets)
     bp.add_url_rule("/ticket/<id>", view_func=ticket_detail)
     bp.add_url_rule(
         "/ticket/create/step1",
@@ -273,8 +273,11 @@ def flaskshop_load_blueprints(app):
         "/ticket/entry/<id>/edit", view_func=ticket_entry_manage, methods=["GET", "POST"]
     )
     bp.add_url_rule(
-        "/ticket/<int:id>/delete", view_func=ticket_entry_del, methods=["DELETE"]
+        "/tickets/<int:id>/delete", view_func=ticket_entry_del, methods=["DELETE"]
     )
-    bp.add_url_rule("/ticket/summary", view_func=index_ticket)
+    bp.add_url_rule("/ticket_sum", view_func=index_ticket)
+    bp.add_url_rule("/ticket_sum_23", view_func=index_ticket_23)
+    bp.add_url_rule("/ticket/graph", view_func=ticket_graph)
+    bp.add_url_rule("/ticket/tide", view_func=tide_graph)
 
     app.register_blueprint(bp, url_prefix="/dashboard")

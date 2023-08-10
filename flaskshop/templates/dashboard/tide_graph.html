@@ -1,0 +1,94 @@
+<DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Test</title>
+    </head>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+
+<body>
+<div id="chart2">
+<canvas id="lineChart" width="600" height="400"></canvas>
+<script>
+    var ctx = document.getElementById("lineChart").getContext("2d");
+    var lineChart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: {{ h_labels | safe }}, 
+            datasets: [{
+                label: "Weights",
+                data: {{ h_values | safe }}, 
+                fill: true,
+                backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',],
+                borderColor: "rgba(32, 150, 80)", 
+                lineTension: 0.5
+                },
+                {
+                    label: "Jed Weights",
+                    data: {{ j_values | safe }}, 
+                    fill: true,
+                    backgroundColor: [
+                    'rgba(25, 99, 132, 0.2)',],
+                    borderColor: "rgba(0, 255, 255)", 
+                    lineTension: 0.5
+                },
+                {
+                    label: "Colt Weights",
+                    data: {{ c_values | safe }}, 
+                    fill: true,
+                    backgroundColor: [
+                    'rgba(25, 199, 132, 0.2)',],
+                    borderColor: "rgba(0, 25, 255)", 
+                    lineTension: 0.5
+                },                
+                ]
+        },
+        options: {
+            responsive: false
+        }
+    });
+</script>
+</div>
+<div id="chart2">
+    <canvas id="barChart" width="600" height="400"></canvas>
+    <script>
+        var ctx = document.getElementById("barChart").getContext("2d");
+        var barChart = new Chart(ctx, {
+            type: "horizontalBar",
+            data: {
+                labels: {{ permit_labels | safe }}, 
+                datasets: [{
+                    axis: 'y',
+                    label: "Weights by Permit",
+                    data: {{ permit_values | safe }}, 
+                    fill: false,
+                    backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 205, 86, 0.2)',
+                    ],
+                    borderColor:[ 
+                    "rgb(255, 99, 132)", 
+                    'rgb(255, 159, 64)',
+                    'rgb(255, 205, 86)',
+                    ],
+                    lineTension: 0.5
+                    },             
+                    ]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: false
+            }
+        });
+    </script>
+    </div>
+
+</body>
+
+</html>
+

@@ -45,7 +45,7 @@ SiteDefaultSettings = {
         "description": "The title of the project.",
     },
     "project_subtitle": {
-        "value": "Gleberts",
+        "value": "Glenberts",
         "value_type": SettingValueType.string,
         "name": "Project subtitle",
         "description": "Fish Shop",

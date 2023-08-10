@@ -72,7 +72,8 @@ def ticket_manage(id=None):
         # tide = ticket.tide_am_pm
     else:
         form = TicketEntryForm()
-        tide = request.args.get("tide_am_pm", 1, int)
+        tide = request.args.get("tide_type")
+        print(tide)
         ticket = TicketEntry(tide_am_pm=tide)
     if form.validate_on_submit():
         form.populate_obj(ticket)
@@ -83,7 +84,7 @@ def ticket_manage(id=None):
     return render_template("ticket/ticket.html", **context)
 
 
-ticket_del = wrap_partial(item_del, TicketEntry)
+ticket_entry_del = wrap_partial(item_del, TicketEntry)
 
 def ticket_create_step1():
     form = TicketCreateForm()
@@ -91,7 +92,7 @@ def ticket_create_step1():
         return redirect(
             url_for(
                 "dashboard.ticket_manage",
-                tide_type=int(form.tide_am_pm.data),
+                tide_type=form.tide_am_pm.data,
             )
         )
     return render_template(
@@ -108,8 +109,8 @@ def ticket_entry_manage(id=None):
         form = TicketForm()
     if form.validate_on_submit():
         form.populate_obj(ticket_entry)
-        ticket_entry.update_images(form.images.data)
-        del form.images
+        # ticket_entry.update_images(form.images.data)
+        # del form.images
 
         ticket_id = request.args.get('ticket_id')
         # ticket_id = request.args.get('ticket_entry_id')
@@ -121,15 +122,15 @@ def ticket_entry_manage(id=None):
         # ticket_entry.sku = str(ticket_entry.product_id) + "-" + str(form.sku_id.data)
         
 
-        upload_imgs = request.files.getlist("new_images")
-        for img in upload_imgs:
-            # request.files.getlist always not return empty, even not upload files
-            if not img.filename:
-                continue
-            ProductImage.create(
-                image=save_img_file(img),
-                product_id=product.id,
-            )
+        # upload_imgs = request.files.getlist("new_images")
+        # for img in upload_imgs:
+        #     # request.files.getlist always not return empty, even not upload files
+        #     if not img.filename:
+        #         continue
+        #     ProductImage.create(
+        #         image=save_img_file(img),
+        #         product_id=product.id,
+        #     )
         
         ticket_entry.save()
         try:
@@ -149,4 +150,4 @@ def ticket_entry_manage(id=None):
     )
 
 
-ticket_entry_del = wrap_partial(item_del, Ticket)
+ticket_del = wrap_partial(item_del, Ticket)

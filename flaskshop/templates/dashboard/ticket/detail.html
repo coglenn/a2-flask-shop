@@ -39,6 +39,10 @@
                                                 class="float-right">{{ ticket.total_weight }}</span>
                                         </li>
                                         <li class="list-group-item">
+                                            <b>{% trans %}Permit Totals{% endtrans %}</b> <span
+                                                class="float-right">{{ ticket.permit_weights }}</span>
+                                        </li>
+                                        <li class="list-group-item">
                                             <b>{% trans %}Created{% endtrans %}</b> <span
                                                 class="float-right">{{ ticket.created_at }}</span>
                                         </li>
@@ -67,7 +71,6 @@
                                 <tr>
                                     <th>{% trans %}ID{% endtrans %}</th>
                                     <th>{% trans %}Landing Number{% endtrans %}</th>
-                                    <th>{% trans %}Title{% endtrans %}</th>
                                     <th>{% trans %}Permit{% endtrans %}</th>
                                     <th>{% trans %}Weight{% endtrans %}</th>
                                 </tr>
@@ -75,7 +78,6 @@
                                     <tr>
                                         <td>{{ item.id }}</td>
                                         <td>{{ item.landing_num }}</td>
-                                        <td>{{ item }}</td>
                                         <td>{{ item.permit_num }}</td>
                                         <td>{{ item.weight }}</td>
                                         <td>
