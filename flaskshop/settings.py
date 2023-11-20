@@ -34,34 +34,34 @@ def configure():
 #         redis_uri = "redis://localhost:6379"
 #         esearch_uri = "localhost"
 
-class DBConfig:
-    db_type = os.getenv("DB_TYPE", "mysql")
-    user = os.getenv("DB_USER", "root")
-    passwd = os.getenv("DB_PASSWD", "DB_PASSWD")
-    host = os.getenv("DB_HOST", "127.0.0.1")
-    port = os.getenv("DB_PORT", 3306)
-    db_name = os.getenv("DB_NAME", "flaskshop")
-    db_uri = (
-        f"mysql+pymysql://{user}:{passwd}@{host}:{port}/{db_name}?charset=utf8mb4"
-    )
-    redis_uri = "redis://localhost:6379"
-    esearch_uri = "localhost"
-
 # class DBConfig:
-#     db_type = os.getenv("DB_TYPE", "postgresql")
-#     user = os.getenv("DB_USER", "DB_USER")
+#     db_type = os.getenv("DB_TYPE", "mysql")
+#     user = os.getenv("DB_USER", "root")
 #     passwd = os.getenv("DB_PASSWD", "DB_PASSWD")
-#     host = os.getenv("DB_HOST", "localhost")
-#     port = os.getenv("DB_PORT", 5432)
-#     db_name = os.getenv("DB_NAME", "glenbert_flaskshop")
-#     if db_type == "postgresql":
-#         db_uri = f"postgresql://{user}:{passwd}@{host}:{port}/{db_name}"
-#     elif db_type == "mysql":
-#         db_uri = (
-#             f"mysql+pymysql://{user}:{passwd}@{host}:{port}/{db_name}?charset=utf8mb4"
-#         )
+#     host = os.getenv("DB_HOST", "127.0.0.1")
+#     port = os.getenv("DB_PORT", 3306)
+#     db_name = os.getenv("DB_NAME", "flaskshop")
+#     db_uri = (
+#         f"mysql+pymysql://{user}:{passwd}@{host}:{port}/{db_name}?charset=utf8mb4"
+#     )
 #     redis_uri = "redis://localhost:6379"
 #     esearch_uri = "localhost"
+
+class DBConfig:
+    db_type = os.getenv("DB_TYPE", "postgresql")
+    user = os.getenv("DB_USER", "DB_USER")
+    passwd = os.getenv("DB_PASSWD", "DB_PASSWD")
+    host = os.getenv("DB_HOST", "localhost")
+    port = os.getenv("DB_PORT", 5432)
+    db_name = os.getenv("DB_NAME", "glenbert_flaskshop")
+    if db_type == "postgresql":
+        db_uri = f"postgresql://{user}:{passwd}@{host}:{port}/{db_name}"
+    elif db_type == "mysql":
+        db_uri = (
+            f"mysql+pymysql://{user}:{passwd}@{host}:{port}/{db_name}?charset=utf8mb4"
+        )
+    redis_uri = "redis://localhost:6379"
+    esearch_uri = "localhost"
 
 
 class Config:
