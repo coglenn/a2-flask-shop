@@ -42,6 +42,7 @@ libgravatar==1.0.0
 Mako==1.2.2
 MarkupSafe==2.1.1
 npm==0.1.1
+noaa-coops==0.3.2
 optional-django==0.1.0
 packaging==21.3
 phonenumbers==8.12.54
