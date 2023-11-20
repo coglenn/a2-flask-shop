@@ -37,7 +37,7 @@ def configure():
 class DBConfig:
     db_type = os.getenv("DB_TYPE", "mysql")
     user = os.getenv("DB_USER", "root")
-    passwd = os.getenv("DB_PASSWD", "Nelly3253")
+    passwd = os.getenv("DB_PASSWD", "DB_PASSWD")
     host = os.getenv("DB_HOST", "127.0.0.1")
     port = os.getenv("DB_PORT", 3306)
     db_name = os.getenv("DB_NAME", "flaskshop")
