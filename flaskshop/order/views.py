@@ -227,7 +227,7 @@ def payment_success(token):
             color = get_color(embro_color.title)
         else:
             color = None
-        if cat_code.category_id == 2:
+        if cat_code.product_type_id == 8:
             get_file_id = ProductVariant.get_by_id(line_item.variant.id)
             item = {
                 "variant_id": line_item.product_sku.split('-')[1],
@@ -242,8 +242,25 @@ def payment_success(token):
                        },
                     ],
             }
-
             items.append(item)
+        if cat_code.product_type_id == 1:
+            get_file_id = ProductVariant.get_by_id(line_item.variant.id)
+            item = {
+                "variant_id": line_item.product_sku.split('-')[1],
+                "quantity": line_item.quantity,
+                "retail_price": int(float(line_item.unit_price_net)),
+                "external_variant_id": line_item.stripe_price_id,
+                # "files": [{
+                #         "id": line_item.stripe_price_id,
+                #             }],
+                # "options" : [{
+                #           "id" : "thread_colors",
+                #           "value" : [color]
+                #        },
+                #     ],
+            }
+            items.append(item)    
+            
     order_json['items'] = items
     url = 'https://api.printful.com/orders'
     headers = {'Authorization': 'Bearer ' + pnt_token,
