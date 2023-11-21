@@ -246,10 +246,10 @@ def payment_success(token):
         if cat_code.product_type_id == 1:
             get_file_id = ProductVariant.get_by_id(line_item.variant.id)
             item = {
-                "variant_id": line_item.product_sku.split('-')[1],
+                # "variant_id": line_item.product_sku.split('-')[1],
                 "quantity": line_item.quantity,
                 "retail_price": int(float(line_item.unit_price_net)),
-                "external_variant_id": line_item.stripe_price_id,
+                "external_variant_id": line_item.product_sku.split('-')[1],
                 # "files": [{
                 #         "id": line_item.stripe_price_id,
                 #             }],
