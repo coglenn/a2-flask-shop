@@ -185,7 +185,7 @@ pnt_token = os.getenv('pnt_token')
 url_base = "https://api.printful.com/"
 get_products_url = "https://api.printful.com/sync/products"
 # url = 'https://www.printful.com/oauth/'
-headers = {'Authorization': 'Bearer ' + pnt_token,
+headers = {'Authorization': 'Bearer ' + str(pnt_token),
             'Content-Type': 'application/json'}
 
 @login_required
