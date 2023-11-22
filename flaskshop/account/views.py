@@ -126,8 +126,7 @@ def edit_address():
                                     },
                           "name": user_address.contact_name,
                           },
-                email= current_user.email,
-                
+                email= current_user.email,   
                 )
         except Exception as e:
             print(e)
@@ -160,9 +159,93 @@ def edit_address():
             "user_id": current_user.id,
         }
         if address_id:
+            try:
+                stripe.Customer.modify(
+                    str(current_user.id),
+                    name = current_user.username,
+                    address={"city": user_address.city,
+                            "line1": user_address.address,
+                            "postal_code": user_address.zip_code,
+                            "state": user_address.state,
+                            "country": "US",
+                            },
+                    shipping={"address":{
+                        "city": user_address.city,
+                            "line1": user_address.address,
+                            "postal_code": user_address.zip_code,
+                            "state": user_address.state,
+                            "country": "US",
+                                        },
+                            "name": user_address.contact_name,
+                            },
+                    email= current_user.email,   
+                    )
+            except Exception as e:
+                print(e)
+                stripe.Customer.create(
+                    id=current_user.id,
+                    name = current_user.username,
+                    address={"city": user_address.city,
+                        "line1": user_address.address,
+                        "postal_code": user_address.zip_code,
+                        "state": user_address.state,
+                        },
+                    shipping={"address":{
+                        "city": user_address.city,
+                            "line1": user_address.address,
+                            "postal_code": user_address.zip_code,
+                            "state": user_address.state,
+                            "country": "US",
+                                        },
+                            "name": user_address.contact_name,
+                            },
+                    email= current_user.email,
+        )            
             UserAddress.update(user_address, **address_data)
             flash(lazy_gettext("Success edit address."), "success")
         else:
+            try:
+                stripe.Customer.modify(
+                    str(current_user.id),
+                    name = current_user.username,
+                    address={"city": user_address.city,
+                            "line1": user_address.address,
+                            "postal_code": user_address.zip_code,
+                            "state": user_address.state,
+                            "country": "US",
+                            },
+                    shipping={"address":{
+                        "city": user_address.city,
+                            "line1": user_address.address,
+                            "postal_code": user_address.zip_code,
+                            "state": user_address.state,
+                            "country": "US",
+                                        },
+                            "name": user_address.contact_name,
+                            },
+                    email= current_user.email,   
+                    )
+            except Exception as e:
+                print(e)
+                stripe.Customer.create(
+                    id=current_user.id,
+                    name = current_user.username,
+                    address={"city": user_address.city,
+                        "line1": user_address.address,
+                        "postal_code": user_address.zip_code,
+                        "state": user_address.state,
+                        },
+                    shipping={"address":{
+                        "city": user_address.city,
+                            "line1": user_address.address,
+                            "postal_code": user_address.zip_code,
+                            "state": user_address.state,
+                            "country": "US",
+                                        },
+                            "name": user_address.contact_name,
+                            },
+                    email= current_user.email,
+        )
             UserAddress.create(**address_data)
             flash(lazy_gettext("Success add address."), "success")
         return redirect(url_for("account.index") + "#addresses")

@@ -150,7 +150,7 @@ def test_pay_flow(token):
         #     description= user_address.contact_name,
         #     )
         checkout_session = stripe.checkout.Session.create(
-            shipping_address_collection={"allowed_countries": ["US"]},
+            # shipping_address_collection={"allowed_countries": ["US"]},
             customer=current_user.id,
             shipping_options=[
             {

@@ -54,7 +54,7 @@
   <div class="text-md-center cart-dropdown__empty">
     <h3>{% trans %}There are no products in your shopping cart.{% endtrans %}</h3>
     <img src="{{ url_for('static', filename='img/empty-cart-bg.png') }}" class="lazyload lazypreload" title="empty">
-    <a href="" class="btn btn-primary">{% trans %}Check out our sales{% endtrans %}</a>
+    <a href="{{ url_for('product.show_category', id=2) }}" class="btn btn-primary">{% trans %}Check out our sales{% endtrans %}</a>
   </div>
   {% endif %}
 </div>

@@ -9,6 +9,8 @@ from flaskshop.discount.models import Voucher
 from flaskshop.order.models import Order
 from flaskshop.utils import flash_errors
 
+import stripe
+
 from .forms import NoteForm, VoucherForm
 from .models import Cart, CartLine, ShippingMethod
 
@@ -47,6 +49,48 @@ def checkout_shipping():
     if request.method == "POST":
         if request.form["address_sel"] != "new":
             user_address = UserAddress.get_by_id(request.form["address_sel"])
+            try:
+                stripe.Customer.modify(
+                    str(current_user.id),
+                    name = current_user.username,
+                    address={"city": user_address.city,
+                            "line1": user_address.address,
+                            "postal_code": user_address.zip_code,
+                            "state": user_address.state,
+                            "country": "US",
+                            },
+                    shipping={"address":{
+                        "city": user_address.city,
+                            "line1": user_address.address,
+                            "postal_code": user_address.zip_code,
+                            "state": user_address.state,
+                            "country": "US",
+                                        },
+                            "name": user_address.contact_name,
+                            },
+                    email= current_user.email,   
+                    )
+            except Exception as e:
+                print(e)
+                stripe.Customer.create(
+                    id=current_user.id,
+                    name = current_user.username,
+                    address={"city": user_address.city,
+                        "line1": user_address.address,
+                        "postal_code": user_address.zip_code,
+                        "state": user_address.state,
+                        },
+                    shipping={"address":{
+                        "city": user_address.city,
+                            "line1": user_address.address,
+                            "postal_code": user_address.zip_code,
+                            "state": user_address.state,
+                            "country": "US",
+                                        },
+                            "name": user_address.contact_name,
+                            },
+                    email= current_user.email,
+        )
         elif request.form["address_sel"] == "new" and form.validate_on_submit():
             user_address = UserAddress.create(
                 contact_name=form.contact_name.data,
@@ -57,6 +101,48 @@ def checkout_shipping():
                 zip_code=form.zip_code.data,
                 user_id=current_user.id,
             )
+        try:
+            stripe.Customer.modify(
+                str(current_user.id),
+                name = current_user.username,
+                address={"city": user_address.city,
+                         "line1": user_address.address,
+                         "postal_code": user_address.zip_code,
+                         "state": user_address.state,
+                         "country": "US",
+                         },
+                shipping={"address":{
+                    "city": user_address.city,
+                         "line1": user_address.address,
+                         "postal_code": user_address.zip_code,
+                         "state": user_address.state,
+                         "country": "US",
+                                    },
+                          "name": user_address.contact_name,
+                          },
+                email= current_user.email,   
+                )
+        except Exception as e:
+            print(e)
+            stripe.Customer.create(
+                id=current_user.id,
+                name = current_user.username,
+                address={"city": user_address.city,
+                    "line1": user_address.address,
+                    "postal_code": user_address.zip_code,
+                    "state": user_address.state,
+                    },
+                shipping={"address":{
+                    "city": user_address.city,
+                         "line1": user_address.address,
+                         "postal_code": user_address.zip_code,
+                         "state": user_address.state,
+                         "country": "US",
+                                    },
+                          "name": user_address.contact_name,
+                          },
+                email= current_user.email,
+    )            
         shipping_method = ShippingMethod.get_by_id(request.form["shipping_method"])
         if user_address and shipping_method != None:
             cart = Cart.get_current_user_cart()
