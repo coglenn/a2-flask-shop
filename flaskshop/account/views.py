@@ -8,6 +8,8 @@ from pluggy import HookimplMarker
 from flaskshop.order.models import Order
 from flaskshop.utils import flash_errors
 
+import stripe
+
 from .forms import AddressForm, ChangePasswordForm, LoginForm, RegisterForm, ResetPasswd
 from .models import User, UserAddress
 from .utils import gen_tmp_pwd, send_reset_pwd_email
@@ -61,6 +63,9 @@ def signup():
     """Register new user."""
     form = RegisterForm(request.form)
     if form.validate_on_submit():
+    #     stripe.Customer.create(
+    #     id=form.email.data.lower(),
+    # )
         user = User.create(
             username=form.username.data,
             email=form.email.data.lower(),
@@ -68,6 +73,9 @@ def signup():
             is_active=True,
         )
         login_user(user)
+        stripe.Customer.create(
+        id=login_user(user).id,
+    )
         flash(lazy_gettext("You are signed up."), "success")
         return redirect(url_for("public.home"))
     else:
@@ -99,6 +107,49 @@ def edit_address():
         user_address = UserAddress.get_by_id(address_id)
         form = AddressForm(request.form, obj=user_address)
     if request.method == "POST" and form.validate_on_submit():
+        try:
+            stripe.Customer.modify(
+                str(current_user.id),
+                name = current_user.username,
+                address={"city": user_address.city,
+                         "line1": user_address.address,
+                         "postal_code": user_address.zip_code,
+                         "state": user_address.state,
+                         "country": "US",
+                         },
+                shipping={"address":{
+                    "city": user_address.city,
+                         "line1": user_address.address,
+                         "postal_code": user_address.zip_code,
+                         "state": user_address.state,
+                         "country": "US",
+                                    },
+                          "name": user_address.contact_name,
+                          },
+                email= current_user.email,
+                
+                )
+        except Exception as e:
+            print(e)
+            stripe.Customer.create(
+                id=current_user.id,
+                name = current_user.username,
+                address={"city": user_address.city,
+                    "line1": user_address.address,
+                    "postal_code": user_address.zip_code,
+                    "state": user_address.state,
+                    },
+                shipping={"address":{
+                    "city": user_address.city,
+                         "line1": user_address.address,
+                         "postal_code": user_address.zip_code,
+                         "state": user_address.state,
+                         "country": "US",
+                                    },
+                          "name": user_address.contact_name,
+                          },
+                email= current_user.email,
+    )
         address_data = {
             "zip_code": form.zip_code.data,
             "city": form.city.data,

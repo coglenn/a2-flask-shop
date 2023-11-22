@@ -131,6 +131,7 @@ def test_pay_flow(token):
     strip_price = OrderLine.query.get(line_id_is)
     order_user_id = order.user_id
     user_email_address = User.query.get(order_user_id)
+    user_address = UserAddress.query.get(order_user_id)
     line_items = OrderLine.query.filter_by(order_id=order.id)
     line_items_list = []
     for line_item in line_items:
@@ -144,27 +145,34 @@ def test_pay_flow(token):
         itm_dict['quantity'] = create_strp_qnty
         line_items_list.append(itm_dict)
     try:
+        # stripe.Customer.create(
+        #     id = user_email_address.email,
+        #     description= user_address.contact_name,
+        #     )
         checkout_session = stripe.checkout.Session.create(
             shipping_address_collection={"allowed_countries": ["US"]},
-              shipping_options=[
-                {
-                  "shipping_rate_data": {
-                    "type": "fixed_amount",
-                    "fixed_amount": {"amount": int(float(order.shipping_price_net)*100), "currency": "usd"},
-                    "display_name": order.shipping_method_name,
-                    "delivery_estimate": {
-                      "minimum": {"unit": "business_day", "value": 5},
-                      "maximum": {"unit": "business_day", "value": 7},
-                    },
-                  },
+            customer=current_user.id,
+            shipping_options=[
+            {
+                "shipping_rate_data": {
+                "type": "fixed_amount",
+                "fixed_amount": {"amount": int(float(order.shipping_price_net)*100), "currency": "usd"},
+                "display_name": order.shipping_method_name,
+                "delivery_estimate": {
+                    "minimum": {"unit": "business_day", "value": 5},
+                    "maximum": {"unit": "business_day", "value": 7},
                 },
-              ],
+                },
+            },
+            ],
             line_items=line_items_list,
-            customer_email = user_email_address.email,
+            # shipping_address_collection = {'enabled': True},
+            # customer_email = user_email_address.email,
             mode = 'payment',
             success_url = 'https://glenbertsfish.com' + '/orders/payment_success/' + str(token),
             cancel_url = 'https://glenbertsfish.com' + '/orders/' + str(token),
-            automatic_tax = {'enabled': True},
+            # automatic_tax = {'enabled': True},
+            # billing_address_collection = {'enabled': True},
             )
     except Exception as e:
         return str(e)
@@ -199,6 +207,8 @@ def payment_success(token):
     payment.pay_success(paid_at=datetime.now())
     line_items = OrderLine.query.filter_by(order_id=order.id)
     get_usr_address = UserAddress.query.filter_by(user_id=order_user_id).first()
+    cust = stripe.Customer.retrieve(current_user.id)
+    print(cust)
     order_json = {
         "recipient": {
             "name": get_usr_address.contact_name,
