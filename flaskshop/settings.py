@@ -121,7 +121,7 @@ class Config:
     MAIL_SERVER = os.getenv("MAIL_SERVER", "MAIL_SERVER")
     MAIL_PORT = os.getenv("MAIL_PORT", 587)
     MAIL_TLS = os.getenv("MAIL_TLS", True)
-    MAIL_SSL = os.getenv("MAIL_SSL", True)
+    MAIL_SSL = os.getenv("MAIL_SSL", False)
     MAIL_USERNAME = os.getenv("MAIL_USERNAME", "MAIL_USERNAME")
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD", "MAIL_PASSWORD")
 
