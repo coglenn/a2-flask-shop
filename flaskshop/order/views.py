@@ -208,7 +208,7 @@ def payment_success(token):
     line_items = OrderLine.query.filter_by(order_id=order.id)
     get_usr_address = UserAddress.query.filter_by(user_id=order_user_id).first()
     cust = stripe.Customer.retrieve(str(current_user.id))
-    print(cust)
+    print(cust['address'])
     order_json = {
         "recipient": {
             "name": get_usr_address.contact_name,
