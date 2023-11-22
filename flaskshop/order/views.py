@@ -171,7 +171,7 @@ def test_pay_flow(token):
             mode = 'payment',
             success_url = 'https://glenbertsfish.com' + '/orders/payment_success/' + str(token),
             cancel_url = 'https://glenbertsfish.com' + '/orders/' + str(token),
-            # automatic_tax = {'enabled': True},
+            automatic_tax = {'enabled': True},
             # billing_address_collection = {'enabled': True},
             )
     except Exception as e:
@@ -209,16 +209,17 @@ def payment_success(token):
     get_usr_address = UserAddress.query.filter_by(user_id=order_user_id).first()
     cust = stripe.Customer.retrieve(str(current_user.id))
     stripe_cust_address=cust['address']
+    stripe_cust_name=cust['shipping']
     print(stripe_cust_address['city'])
     order_json = {
         "recipient": {
-            "name": get_usr_address.contact_name,
-            "address1": get_usr_address.address,
-            "city": get_usr_address.city,
-            "state_name": get_usr_address.state,
-            "state_code": get_state_abbrev(get_usr_address.state),
+            "name": stripe_cust_name['name'],
+            "address1": stripe_cust_address['line1'],
+            "city": stripe_cust_address['city'],
+            "state_name": stripe_cust_address['state'],
+            "state_code": get_state_abbrev(stripe_cust_address['state']),
             "country_code": 'US',
-            "zip": get_usr_address.zip_code
+            "zip": stripe_cust_address['postal_code']
         },
         "items": [{}],
         "retail_costs": {
