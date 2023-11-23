@@ -199,7 +199,7 @@ def payment_success(token):
     msg = Message(subject = 'Hello, Order#' + str(email_order_num[3]) + ' is processing!' ,
                 sender = ('Glenberts Fish Co.', 'orders@glenbertsfish.com'),
                 recipients = [user_email_address.email],
-                reply_to = None
+                reply_to = 'orders@glenbertsfish.com'
                 )
     msg.html = render_template("orders/order_email.html", order=order)
     mail = Mail(current_app)
@@ -210,7 +210,7 @@ def payment_success(token):
     cust = stripe.Customer.retrieve(str(current_user.id))
     stripe_cust_address=cust['address']
     stripe_cust_name=cust['shipping']
-    print(stripe_cust_address['city'])
+    # print(stripe_cust_address['city'])
     order_json = {
         "recipient": {
             "name": stripe_cust_name['name'],
