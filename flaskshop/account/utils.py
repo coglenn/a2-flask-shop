@@ -9,6 +9,7 @@ import phonenumbers
 from flask import abort, current_app, render_template
 from flask_login import current_user
 from phonenumbers.phonenumberutil import is_possible_number
+from flask_mail import Mail, Message
 from wtforms import ValidationError
 
 from flaskshop.constant import Permission
@@ -167,17 +168,14 @@ def create_email_server():
     return server
 
 
+
+
 def send_reset_pwd_email(to_email, new_passwd):
-    mailuser = current_app.config.get("MAIL_USERNAME")
-    mailpwd = current_app.config.get("MAIL_PASSWORD")
-
-    msg = EmailMessage()
-    msg["To"] = email.utils.formataddr(("Recipient", to_email))
-    msg["From"] = email.utils.formataddr(("Admin", mailuser))
-    msg["Subject"] = "Reset Password"
-    body = render_template("account/reset_passwd_mail.html", new_passwd=new_passwd)
-    msg.set_content(body, "html")
-
-    with create_email_server() as s:
-        s.login(mailuser, mailpwd)
-        s.send_message(msg)
+    msg = Message(subject = 'Reset Password' ,
+                sender = ('Glenberts Fish Co.', 'orders@glenbertsfish.com'),
+                recipients = [to_email],
+                reply_to = 'no-reply@glenbertsfish.com'
+                )
+    msg.html = render_template("account/reset_passwd_mail.html", new_passwd=new_passwd)
+    mail = Mail(current_app)
+    mail.send(msg)

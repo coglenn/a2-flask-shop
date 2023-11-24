@@ -135,6 +135,9 @@ def test_pay_flow(token):
     line_items = OrderLine.query.filter_by(order_id=order.id)
     line_items_list = []
     for line_item in line_items:
+        # stripe.Product.create(name=line_item.product_name,
+        #                                             id=line_item.product_id
+        #                                             )
         create_strp_price = stripe.Price.create(
                                     unit_amount = int(float(line_item.unit_price_net)*100),
                                     currency = "usd",
@@ -175,6 +178,7 @@ def test_pay_flow(token):
             # billing_address_collection = {'enabled': True},
             )
     except Exception as e:
+        
         return str(e)
     # return redirect(url_for("order.payment_success"))
     return redirect(checkout_session.url, code=303)

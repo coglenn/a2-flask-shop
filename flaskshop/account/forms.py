@@ -84,7 +84,7 @@ class ResetPasswd(FlaskForm):
 
         self.user = User.query.filter_by(email=self.username.data).first()
         if not self.user:
-            self.username.errors.append(lazy_gettext("Unknown username"))
+            self.username.errors.append(lazy_gettext("Unknown username, must use registered email address"))
             return False
         if not self.user.is_active:
             self.username.errors.append(lazy_gettext("User not activated"))
