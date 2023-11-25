@@ -31,6 +31,12 @@
       </li>
 
       <li class="nav-item" role="presentation">
+        <a class="nav-link " data-bs-toggle="tab" data-bs-target="#email" href="#" role="tab">
+          <h3>{% trans %}Change email{% endtrans %}</h3>
+        </a>
+      </li>
+
+      <li class="nav-item" role="presentation">
         <a class="nav-link" data-bs-toggle="tab" data-bs-target="#addresses" href="#" role="tab">
           <h3>{% trans %}Addresses book{% endtrans %}</h3>
         </a>
@@ -105,6 +111,18 @@
             {{ render_field(form.confirm) }}
 
             <input type="submit" class="btn btn-primary narrow" value="{% trans %}Change password{% endtrans %}">
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade" id="email" role="tabpanel">
+      <div class="row ">
+        <div class="col-md-8 col-lg-6 m-auto account__email">
+          {% trans %}Current Email: {% endtrans %}{{ current_user.email }} 
+          <form action="{{ url_for('account.set_email') }}" method="post">
+            {{ emailform.csrf_token }}
+            {{ render_field(emailform.email) }}
+            <input type="submit" class="btn btn-primary narrow" value="{% trans %}Change Email{% endtrans %}">
           </form>
         </div>
       </div>

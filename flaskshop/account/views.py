@@ -10,7 +10,7 @@ from flaskshop.utils import flash_errors
 
 import stripe
 
-from .forms import AddressForm, ChangePasswordForm, LoginForm, RegisterForm, ResetPasswd
+from .forms import AddressForm, ChangePasswordForm, LoginForm, RegisterForm, ResetPasswd, EditEmail
 from .models import User, UserAddress
 from .utils import gen_tmp_pwd, send_reset_pwd_email
 
@@ -19,8 +19,9 @@ impl = HookimplMarker("flaskshop")
 
 def index():
     form = ChangePasswordForm(request.form)
+    emailform = EditEmail()
     orders = Order.get_current_user_orders()
-    return render_template("account/details.html", form=form, orders=orders)
+    return render_template("account/details.html", form=form, emailform=emailform, orders=orders)
 
 
 def login():
@@ -81,6 +82,16 @@ def signup():
     else:
         flash_errors(form)
     return render_template("account/signup.html", form=form)
+
+
+def set_email():
+    emailform = EditEmail()
+    if emailform.validate_on_submit():
+        current_user.update(email=emailform.email.data)
+        flash(lazy_gettext(f"You have saved your email as - {current_user.email}"), "success")
+    else:
+        flash_errors(emailform)
+    return redirect(url_for("account.index"))
 
 
 def set_password():
@@ -273,6 +284,7 @@ def flaskshop_load_blueprints(app):
     bp.add_url_rule("/resetpwd", view_func=resetpwd, methods=["GET", "POST"])
     bp.add_url_rule("/logout", view_func=logout)
     bp.add_url_rule("/signup", view_func=signup, methods=["GET", "POST"])
+    bp.add_url_rule("/setemail", view_func=set_email, methods=["POST"])
     bp.add_url_rule("/setpwd", view_func=set_password, methods=["POST"])
     bp.add_url_rule("/address", view_func=addresses)
     bp.add_url_rule("/address/edit", view_func=edit_address, methods=["GET", "POST"])

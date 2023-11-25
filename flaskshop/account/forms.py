@@ -61,6 +61,11 @@ class RegisterForm(FlaskForm):
             return False
         return True
 
+class EditEmail(FlaskForm):
+    email = StringField(
+        lazy_gettext("Email"),
+        validators=[DataRequired(), Email(), Length(min=6, max=40)],
+    )
 
 class ResetPasswd(FlaskForm):
     """Password reset"""
