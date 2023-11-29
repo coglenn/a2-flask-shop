@@ -69,9 +69,9 @@ def create_payment(token, payment_method):
             total=order.total,
             customer_ip_address=customer_ip_address,
         )
-    if payment_method == "alipay":
-        redirect_url = zhifubao.send_order(order.token, payment_no, order.total)
-        payment.redirect_url = redirect_url
+    # if payment_method == "alipay":
+    #     redirect_url = zhifubao.send_order(order.token, payment_no, order.total)
+    #     payment.redirect_url = redirect_url
     return payment
 
 
