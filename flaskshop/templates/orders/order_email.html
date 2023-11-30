@@ -64,7 +64,7 @@ table.bottomBorder th {
                                                 <td style="height:40px;">&nbsp;</td>
                                             </tr>
                                             <tr>
-                                                <table>
+                                               
                                                     <tr>
                                                       <th>Product<th>
                                                       <th>Quantity<th>
@@ -77,44 +77,59 @@ table.bottomBorder th {
                                                               <span class="order-details__product__description">{{ line.product_name }}</span>
                                                             </a>
                                                         </td>
+                                                        <td style="height:20px;">&nbsp;</td>
                                                         <td>x {{ line.quantity }}</td>
+                                                        <td style="height:20px;">&nbsp;</td>
                                                         <td>${{ line.get_total() }}</td>
                                                     </tr>
                                                         {% endfor %}
-                                                  </table>
+                                                    <tr style="height:20px;">&nbsp;</tr>    
+                                                    <tr style="float:left">
+                                                        <th style="font-weight:normal">&nbsp;&nbsp;Subtotal:&nbsp;</th>
+                                                        <td> ${{ order.total_net }}</td>
+                                                    </tr> 
+                                                    <tr style="height:3px;">&nbsp;</tr>  
+                                                    {% if order.is_shipping_required %}
+                                                    <tr style="float:left">
+                                                        <th style="font-weight:normal">&nbsp;&nbsp;Shipping:&nbsp;</th>
+                                                        <td> ({{ order.shipping_method_name}})
+                                                            ${{ order.shipping_price_net }}
+                                                        </td>      
+                                                    </tr>   
+                                                    {% endif %}
+
+                                                    {% if order.discount_amount %}
+                                                    <tr style="height:3px;">&nbsp;</tr>
+                                                    <tr style="float:left">
+                                                        <th style="font-weight:normal">&nbsp;&nbsp;{{ order.discount_name }}&nbsp;</th>
+                                                        <td> -${{ order.discount_amount  }} </td>      
+                                                    </tr>   
+                                                    {% endif %}
+                                                    <tr style="height:5px;">&nbsp;</tr>    
+                                                    <tr style="float:left">
+                                                        <th>&nbsp;&nbsp;Total:&nbsp;</th>
+                                                        <td> ${{ order.total }}</td>
+                                                    </tr> 
+                                                    {% if order.is_shipping_required %}
+                                                    <tr style="height:10px;">&nbsp;</tr>
+                                                    <tr style="float:left">
+                                                        <th>&nbsp;&nbsp;Shipping address</th>     
+                                                    </tr>
+                                                    <tr style="height:3px;">&nbsp;</tr>   
+                                                    <tr style="float:left"><td> {{ order.shipping_address | safe }} </td>  </tr>
+                                                    {% endif %}
+                                                    {% if order.notes %}
+                                                    <tr style="height:3px;">&nbsp;</tr>
+                                                    <tr style="float:left">
+                                                        <th style="text-decoration: underline">&nbsp;&nbsp;Your note&nbsp;</th>
+                                                        {% for note in order.notes %}
+                                                        <tr style="height:3px;">&nbsp;</tr>
+                                                        <tr style="float:left"><td> <p>&nbsp;&nbsp;{{ note.content }}</p></td> </tr>  
+                                                        {% endfor %}    
+                                                    </tr>   
+                                                    {% endif %}
                                             </tr>
-                                            <tr>
-                                                <td style="height:40px;">&nbsp;</td>
-                                                <p class="float-right"></p>
-                                                {% trans %}Subtotal{% endtrans %}
-                                                ${{ order.total_net }}
-                                                <br>
-                                                {% if order.is_shipping_required %}
-                                                    {% trans %}Shipping{% endtrans %}
-                                                    ({{ order.shipping_method_name}})
-                                                    ${{ order.shipping_price_net }}
-                                                {% endif %}
-                                                {% if order.discount_amount %}
-                                                    <p>{{ order.discount_name }}</p>
-                                                    -${{ order.discount_amount  }}
-                                                {% endif %}
-                                            <h3>
-                                                {% trans %}Total{% endtrans %}
-                                            </h3>
-                                                ${{ order.total  }}
-                                                {% if order.is_shipping_required %}
-                                                <h3>
-                                                    {% trans %}Shipping address{% endtrans %}
-                                                </h3>
-                                                    {{ order.shipping_address | safe }}
-                                                {% endif %}
-                                                {% if order.notes %}
-                                                    <h2>{% trans %}Your note{% endtrans %}</h2>
-                                                    {% for note in order.notes %}
-                                                        <p>{{ note.content }}</p>
-                                                    {% endfor %}
-                                                {% endif %}
-                                            </tr>
+
                                         </table>
                                     </td>
                                 <tr>

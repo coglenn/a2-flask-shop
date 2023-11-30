@@ -152,31 +152,59 @@ def test_pay_flow(token):
         #     id = user_email_address.email,
         #     description= user_address.contact_name,
         #     )
-        checkout_session = stripe.checkout.Session.create(
-            # shipping_address_collection={"allowed_countries": ["US"]},
-            customer=current_user.id,
-            shipping_options=[
-            {
-                "shipping_rate_data": {
-                "type": "fixed_amount",
-                "fixed_amount": {"amount": int(float(order.shipping_price_net)*100), "currency": "usd"},
-                "display_name": order.shipping_method_name,
-                "delivery_estimate": {
-                    "minimum": {"unit": "business_day", "value": 5},
-                    "maximum": {"unit": "business_day", "value": 7},
+        if os.getenv('FLASK_ENV') == 'development':
+            checkout_session = stripe.checkout.Session.create(
+                # shipping_address_collection={"allowed_countries": ["US"]},
+                customer=current_user.id,
+                shipping_options=[
+                {
+                    "shipping_rate_data": {
+                    "type": "fixed_amount",
+                    "fixed_amount": {"amount": int(float(order.shipping_price_net)*100), "currency": "usd"},
+                    "display_name": order.shipping_method_name,
+                    "delivery_estimate": {
+                        "minimum": {"unit": "business_day", "value": 5},
+                        "maximum": {"unit": "business_day", "value": 7},
+                    },
+                    },
                 },
-                },
-            },
-            ],
-            line_items=line_items_list,
-            # shipping_address_collection = {'enabled': True},
-            # customer_email = user_email_address.email,
-            mode = 'payment',
-            success_url = 'https://glenbertsfish.com' + '/orders/payment_success/' + str(token),
-            cancel_url = 'https://glenbertsfish.com' + '/orders/' + str(token),
-            automatic_tax = {'enabled': True},
-            # billing_address_collection = {'enabled': True},
+                ],
+                line_items=line_items_list,
+                # shipping_address_collection = {'enabled': True},
+                # customer_email = user_email_address.email,
+                mode = 'payment',
+                automatic_tax = {'enabled': True},
+                
+                success_url = 'http://127.0.0.1:3030' + '/orders/payment_success/' + str(token),
+                cancel_url = 'http://127.0.0.1:3030' + '/orders/' + str(token),
             )
+        else:    
+            checkout_session = stripe.checkout.Session.create(
+                # shipping_address_collection={"allowed_countries": ["US"]},
+                customer=current_user.id,
+                shipping_options=[
+                {
+                    "shipping_rate_data": {
+                    "type": "fixed_amount",
+                    "fixed_amount": {"amount": int(float(order.shipping_price_net)*100), "currency": "usd"},
+                    "display_name": order.shipping_method_name,
+                    "delivery_estimate": {
+                        "minimum": {"unit": "business_day", "value": 5},
+                        "maximum": {"unit": "business_day", "value": 7},
+                    },
+                    },
+                },
+                ],
+                line_items=line_items_list,
+                # shipping_address_collection = {'enabled': True},
+                # customer_email = user_email_address.email,
+                mode = 'payment',
+                automatic_tax = {'enabled': True},
+                success_url = 'https://glenbertsfish.com' + '/orders/payment_success/' + str(token),
+                cancel_url = 'https://glenbertsfish.com' + '/orders/' + str(token),
+                
+                # billing_address_collection = {'enabled': True},
+                )
     except Exception as e:
         
         return str(e)
@@ -325,7 +353,7 @@ def flaskshop_load_blueprints(app):
     bp.add_url_rule("/<string:token>", view_func=show)
     # bp.add_url_rule("/pay/<string:token>/alipay", view_func=ali_pay)
     # bp.add_url_rule("/alipay/notify", view_func=ali_notify, methods=["POST", "HEAD"])
-    bp.add_url_rule("/pay/<string:token>/testpay", view_func=test_pay_flow)
+    bp.add_url_rule("/pay/<string:token>/create", view_func=test_pay_flow)
     bp.add_url_rule("/payment_success/<string:token>", view_func=payment_success)
     bp.add_url_rule("/cancel/<string:token>", view_func=cancel_order)
     bp.add_url_rule("/receive/<string:token>", view_func=receive)
