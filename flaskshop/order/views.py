@@ -23,6 +23,10 @@ from flaskshop.extensions import csrf_protect
 # from .payment import zhifubao
 import stripe
 from .models import Order, OrderPayment, OrderLine
+import easypost
+
+
+client = easypost.EasyPostClient(os.getenv("EASYPOST_API_KEY"))
 
 
 stripe.api_key = os.getenv('stripe_api_key')
@@ -220,9 +224,58 @@ get_products_url = "https://api.printful.com/sync/products"
 headers = {'Authorization': 'Bearer ' + str(pnt_token),
             'Content-Type': 'application/json'}
 
+def easypost_shipping_address():
+    address = client.address.create(
+    verify_strict=True,
+    street1=stripe_cust_address['line1'],
+    street2="",
+    city=stripe_cust_address['city'],
+    state=get_state_abbrev(stripe_cust_address['state']),
+    zip=stripe_cust_address['postal_code'],
+    country="US",
+    company=stripe_cust_name['name'],
+    
+)
+
+
 @login_required
 def payment_success(token):
     payment = create_payment(token, "stripe_pay")
+    cust = stripe.Customer.retrieve(str(current_user.id))
+    stripe_cust_address=cust['address']
+    stripe_cust_name=cust['shipping']
+    shipment = client.shipment.create(
+    to_address={
+        "name": stripe_cust_name['name'],
+        "street1": stripe_cust_address['line1'],
+        "city": stripe_cust_address['city'],
+        "state": get_state_abbrev(stripe_cust_address['state']),
+        "zip": stripe_cust_address['postal_code'],
+        "country": "US",
+    },
+    from_address={
+        "name": "Glenberts Fish Co.",
+        "street1": "9543 W Calico Ct.",
+        "city": "Boise",
+        "state": "ID",
+        "zip": "83709",
+        "country": "US",
+        "phone": "2087050231",
+        "email": "orders@glenbertsfish.com",
+    },
+    parcel={
+        "length": 20.2,
+        "width": 10.9,
+        "height": 10,
+        "weight": 160,
+    },
+    )
+    bought_shipment = client.shipment.buy(
+    shipment['id'],
+    rate=shipment.lowest_rate(),
+    # insurance=249.99,
+)
+
     order = Order.query.filter_by(token=token).first()
     order_num = str(order.token)
     email_order_num = order_num.rsplit('-', 3)
@@ -239,10 +292,8 @@ def payment_success(token):
     payment.pay_success(paid_at=datetime.now())
     line_items = OrderLine.query.filter_by(order_id=order.id)
     get_usr_address = UserAddress.query.filter_by(user_id=order_user_id).first()
-    cust = stripe.Customer.retrieve(str(current_user.id))
-    stripe_cust_address=cust['address']
-    stripe_cust_name=cust['shipping']
-    # print(stripe_cust_address['city'])
+    
+    print(shipment['tracking_code'])
     order_json = {
         "recipient": {
             "name": stripe_cust_name['name'],

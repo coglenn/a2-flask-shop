@@ -18,6 +18,7 @@ Deprecated==1.2.13
 dnspython==2.2.1
 docopt==0.6.2
 dominate==2.7.0
+easypost==8.2.1
 elasticsearch==7.17.6
 elasticsearch-dsl==7.4.0
 email-validator==1.2.1

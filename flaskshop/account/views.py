@@ -7,12 +7,15 @@ from pluggy import HookimplMarker
 
 from flaskshop.order.models import Order
 from flaskshop.utils import flash_errors
+from flaskshop.constant import get_state_abbrev
 
-import stripe
+import stripe, easypost, os
 
 from .forms import AddressForm, ChangePasswordForm, LoginForm, RegisterForm, ResetPasswd, EditEmail
 from .models import User, UserAddress
 from .utils import gen_tmp_pwd, send_reset_pwd_email
+
+client = easypost.EasyPostClient(os.getenv("EASYPOST_API_KEY"))
 
 impl = HookimplMarker("flaskshop")
 
@@ -127,6 +130,23 @@ def edit_address():
             "contact_phone": form.contact_phone.data,
             "user_id": current_user.id,
         }
+        try:
+            address = client.address.create(
+                verify_strict=True,
+                street1=form.address.data,
+                street2="",
+                city=form.city.data,
+                state=get_state_abbrev(form.state.data),
+                zip=form.zip_code.data,
+                country="US",
+                name=form.contact_name.data,
+                )
+            flash(lazy_gettext('Address Verified'), "success")
+            print(address)
+        except easypost.errors.api.ApiError as error:
+            for error in error.errors:   
+                print(error['message'])
+                flash(lazy_gettext(f"Please Double Check Address - {error['message']}"), "danger")
         # try:
         #     stripe.Customer.modify(
         #         str(current_user.id),

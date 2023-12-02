@@ -8,11 +8,16 @@ from flaskshop.account.models import UserAddress
 from flaskshop.discount.models import Voucher
 from flaskshop.order.models import Order
 from flaskshop.utils import flash_errors
+from flaskshop.constant import get_state_abbrev, get_color
 
-import stripe
+import stripe, os
 
 from .forms import NoteForm, VoucherForm
 from .models import Cart, CartLine, ShippingMethod
+import easypost
+
+
+client = easypost.EasyPostClient(os.getenv("EASYPOST_API_KEY"))
 
 impl = HookimplMarker("flaskshop")
 
@@ -48,7 +53,25 @@ def checkout_shipping():
     user_address = None
     if request.method == "POST":
         if request.form["address_sel"] != "new":
+            try:
+                address = client.address.create(
+                    verify_strict=True,
+                    street1=user_address.address,
+                    street2="",
+                    city=user_address.city,
+                    state=get_state_abbrev(user_address.state),
+                    zip=user_address.zip_code,
+                    country="US",
+                    name=current_user.username,
+                    )
+                flash(lazy_gettext('Address Verified'), "success")
+                print(address)
+            except easypost.errors.api.ApiError as error:
+                for error in error.errors:   
+                    print(error['message'])
+                    flash(lazy_gettext(error['message']), "danger")
             user_address = UserAddress.get_by_id(request.form["address_sel"])
+                       
             try:
                 stripe.Customer.modify(
                     str(current_user.id),
@@ -101,6 +124,23 @@ def checkout_shipping():
                 zip_code=form.zip_code.data,
                 user_id=current_user.id,
             )
+            try:
+                address = client.address.create(
+                    verify_strict=True,
+                    street1=user_address.address,
+                    street2="",
+                    city=user_address.city,
+                    state=get_state_abbrev(user_address.state),
+                    zip=user_address.zip_code,
+                    country="US",
+                    name=current_user.username,
+                    )
+                flash(lazy_gettext('Address Verified'), "success")
+                print(address)
+            except easypost.errors.api.ApiError as error:
+                for error in error.errors:   
+                    print(error['message'])
+                    flash(lazy_gettext(error['message']), "danger")
         try:
             stripe.Customer.modify(
                 str(current_user.id),
@@ -142,7 +182,8 @@ def checkout_shipping():
                           "name": user_address.contact_name,
                           },
                 email= current_user.email,
-    )            
+    )        
+                
         shipping_method = ShippingMethod.get_by_id(request.form["shipping_method"])
         if user_address and shipping_method != None:
             cart = Cart.get_current_user_cart()
