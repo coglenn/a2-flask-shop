@@ -54,6 +54,7 @@ def checkout_shipping():
     if request.method == "POST":
         if request.form["address_sel"] != "new":
             try:
+                user_address = UserAddress.get_by_id(request.form["address_sel"])
                 address = client.address.create(
                     verify_strict=True,
                     street1=user_address.address,
@@ -70,7 +71,7 @@ def checkout_shipping():
                 for error in error.errors:   
                     print(error['message'])
                     flash(lazy_gettext(error['message']), "danger")
-            user_address = UserAddress.get_by_id(request.form["address_sel"])
+            
                        
             try:
                 stripe.Customer.modify(
