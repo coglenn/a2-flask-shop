@@ -8,6 +8,7 @@ from flask_bootstrap import Bootstrap5
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_login import LoginManager
 from flask_migrate import Migrate
+from flask_sitemapper import Sitemapper
 from flask_sqlalchemy import DefaultMeta, Model, SQLAlchemy, _QueryProperty
 from flask_wtf.csrf import CSRFProtect
 from sqlalchemy import Column, DateTime, Integer, event
@@ -21,6 +22,7 @@ login_manager = LoginManager()
 migrate = Migrate(compare_type=True)
 debug_toolbar = DebugToolbarExtension()
 bootstrap = Bootstrap5()
+sitemapper = Sitemapper()
 babel = Babel()
 
 

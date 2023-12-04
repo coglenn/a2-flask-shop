@@ -14,6 +14,7 @@ from flaskshop.extensions import (
     debug_toolbar,
     login_manager,
     migrate,
+    sitemapper,
 )
 from flaskshop.plugin import manager, spec
 from flaskshop.plugin.models import PluginRegistry
@@ -28,6 +29,7 @@ def create_app(config_object=Config):
     register_extensions(app)
     load_plugins(app)
     register_blueprints(app)
+    register_second_extensions(app)
     register_errorhandlers(app)
     register_shellcontext(app)
     register_commands(app)
@@ -45,11 +47,14 @@ def register_extensions(app):
     migrate.init_app(app, db)
     bootstrap.init_app(app)
     babel.init_app(app)
+    sitemapper.init_app(app)
 
 
 def register_blueprints(app):
     app.pluggy.hook.flaskshop_load_blueprints(app=app)
-
+    
+def register_second_extensions(app):    
+    sitemapper.init_app(app)
 
 def register_errorhandlers(app):
     """Register error handlers."""

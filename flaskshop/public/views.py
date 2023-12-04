@@ -2,13 +2,14 @@
 """Public section, including homepage and signup."""
 from flask import Blueprint, current_app, render_template, request, send_from_directory
 from pluggy import HookimplMarker
-
+# from ..app import app
 from flaskshop.account.models import User
-from flaskshop.extensions import login_manager
+from flaskshop.extensions import login_manager, sitemapper
 from flaskshop.product.models import Product
 
 from .models import Page
 from .search import Item
+# from .sitemap import sitemap
 
 impl = HookimplMarker("flaskshop")
 
@@ -18,7 +19,7 @@ def load_user(user_id):
     """Load user by ID."""
     return User.get_by_id(int(user_id))
 
-
+# @sitemapper.include(lastmod="2023-12-01")
 def home():
     products = Product.get_featured_product()
     return render_template("public/home.html", products=products)
@@ -53,7 +54,18 @@ def show_page(identity):
     page = Page.get_by_identity(identity)
     return render_template("public/page.html", page=page)
 
+def get_products_list():
+    # with app.app_context():
+    products = Product.query.all()
+    list_products = []
+    for product in products:
+        list_products.append(product.id)
+    return list_products
 
+def sitemap():
+    return sitemapper.generate()
+
+# @sitemapper.include()
 @impl
 def flaskshop_load_blueprints(app):
     bp = Blueprint("public", __name__)
@@ -61,5 +73,11 @@ def flaskshop_load_blueprints(app):
     bp.add_url_rule("/style", view_func=style)
     bp.add_url_rule("/favicon.ico", view_func=favicon)
     bp.add_url_rule("/search", view_func=search)
+    bp.add_url_rule("/sitemap.xml", view_func=sitemap)
     bp.add_url_rule("/page/<identity>", view_func=show_page)
     app.register_blueprint(bp)
+
+sitemapper.add_endpoint("public.home")
+sitemapper.add_endpoint("public.show_page", url_variables={"identity": ['about']},)
+sitemapper.add_endpoint("product.show", url_variables={"id": [129, 130, 131, 132, 133, 134]},)
+# sitemapper.add_endpoint("public.show_page", identity='about')
