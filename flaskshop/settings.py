@@ -71,7 +71,7 @@ class DBConfig:
 
 class Config:
     ENV = "development"
-    FLASK_DEBUG = False
+    FLASK_DEBUG = True
     configure()
     SECRET_KEY = os.getenv("SECRET_KEY", "SECRET_KEY")
 
@@ -109,9 +109,9 @@ class Config:
     PURCHASE_URI = os.getenv("PURCHASE_URI", "")
 
     BCRYPT_LOG_ROUNDS = 13
-    DEBUG_TB_ENABLED = os.getenv("FLASK_DEBUG", False)  # Disable Debug toolbar
+    DEBUG_TB_ENABLED = os.getenv("FLASK_DEBUG", True)  # Disable Debug toolbar
     DEBUG_TB_INTERCEPT_REDIRECTS = False
-    DEBUG_TB_PROFILER_ENABLED = False
+    DEBUG_TB_PROFILER_ENABLED = True
 
     MESSAGE_QUOTA = 10
 

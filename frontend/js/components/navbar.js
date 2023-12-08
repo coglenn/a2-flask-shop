@@ -13,6 +13,7 @@ const renderNavbar = () => {
       navLink.innerHTML = link.innerHTML;
       navLink.classList.add('nav-link');
       loginItem.classList.add('nav-item', 'login-item');
+      navLink.href = link;
       loginItem.appendChild(navLink);
       mobileLinks.appendChild(loginItem);
     });
