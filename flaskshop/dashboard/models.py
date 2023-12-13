@@ -224,3 +224,11 @@ class Ticket(Model):
     #         from flaskshop.public.search import Item
 
     #         Item.delete(target)
+    
+# from app import admin
+
+# from flask_admin.contrib.sqla import ModelView
+# # from flaskshop.dashboard.models import TicketEntry
+
+
+# admin.add_view(ModelView(TicketEntry, db.session, 'Power Rankings'))

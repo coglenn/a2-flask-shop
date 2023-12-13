@@ -14,6 +14,7 @@ from flaskshop.extensions import (
     debug_toolbar,
     login_manager,
     migrate,
+    # admin,
     sitemapper,
 )
 from flaskshop.plugin import manager, spec
@@ -48,6 +49,8 @@ def register_extensions(app):
     bootstrap.init_app(app)
     babel.init_app(app)
     sitemapper.init_app(app)
+    # admin.init_app(app)
+    # app.config['FLASK_ADMIN_SWATCH'] = 'superhero'
 
 
 def register_blueprints(app):

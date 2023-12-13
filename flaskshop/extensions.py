@@ -15,6 +15,11 @@ from sqlalchemy import Column, DateTime, Integer, event
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 
 from flaskshop.corelib.db import PropsItem, PropsMixin
+# from flask_admin import Admin
+
+
+
+# admin = Admin(name='The Dawgs Admin', template_mode='bootstrap4')
 
 bcrypt = Bcrypt()
 csrf_protect = CSRFProtect()
