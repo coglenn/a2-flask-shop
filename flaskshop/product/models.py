@@ -782,10 +782,14 @@ def get_product_list_context(query, obj):
 
     args_dict.update(default_attr={})
     attr_filter = obj.attr_filter
+    print(f"attr_filter: {attr_filter}")
     for attr in attr_filter:
+        print(f"attr: {attr}")
         value = request.args.get(attr.title)
+        print(value)
         if value:
             query = query.filter(Product.attributes.__getitem__(str(attr.id)) == value)
+            print(query)
             args_dict["default_attr"].update({attr.title: str(value)})
     args_dict.update(attr_filter=attr_filter)
 
