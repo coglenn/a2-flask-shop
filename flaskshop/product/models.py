@@ -789,8 +789,8 @@ def get_product_list_context(query, obj):
         print(f"V: {value}")
         if value:
             print(f"atte.id: {attr.id}")
-            query = query.filter(Product.attributes.__getitem__(str(attr.id)) == str(value))
-            # print(query)
+            query = query.filter(Product.attributes.__getitem__(str(attr.id)) == str(68))
+            print(query)
             print({attr.title: int(value)})
             args_dict["default_attr"].update({attr.title: int(value)})
     args_dict.update(attr_filter=attr_filter)
