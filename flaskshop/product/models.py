@@ -796,7 +796,7 @@ def get_product_list_context(query, obj):
             print(f"Value: {value}")
             # query = query.filter(Product.attributes[(str(attr.id))] == str(value))
             # query = Product.query.filter(cast(Product.__table__.c.attributes[attr.id], String) == value)
-            query = Product.query.filter(cast(Product.attributes[str(attr.id)], JSONB).contains([str(value)]))
+            query = Product.query.filter(cast(Product.attributes[str(attr.id)], JSONB).contains([str(value)])).all()
             print(query)
             print({attr.title: int(value)})
             args_dict["default_attr"].update({attr.title: int(value)})
