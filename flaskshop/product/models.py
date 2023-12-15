@@ -7,6 +7,8 @@ from sqlalchemy.ext.mutable import MutableDict
 from flaskshop.corelib.db import PropsItem
 from flaskshop.corelib.mc import cache, cache_by_args, rdb
 from flaskshop.database import Column, Model, db
+from sqlalchemy.sql.expression import cast
+from sqlalchemy import String
 from flaskshop.settings import Config
 
 MC_KEY_FEATURED_PRODUCTS = "product:featured:{}"
@@ -782,19 +784,21 @@ def get_product_list_context(query, obj):
 
     args_dict.update(default_attr={})
     attr_filter = obj.attr_filter
-    print(f"attr_filter: {attr_filter}")
+    # print(f"attr_filter: {attr_filter}")
     for attr in attr_filter:
-        print(f"attr: {attr}")
+        # print(f"attr: {attr}")
         value = request.args.get(attr.title)
-        print(f"V: {value}")
+        # print(f"V: {value}")
         if value:
             print(f"atte.id: {attr.id}")
-            query = query.filter(Product.attributes[(int(attr.id))] == int(value))
+            print(f"Value: {value}")
+            # query = query.filter(Product.attributes[(str(attr.id))] == str(value))
+            query = Product.query.filter(cast(Product.__table__.c.attributes[attr.id], String) == value)
             print(query)
             print({attr.title: int(value)})
             args_dict["default_attr"].update({attr.title: int(value)})
     args_dict.update(attr_filter=attr_filter)
-    print(args_dict)
+    # print(args_dict)
 
     if request.args:
         args_dict.update(clear_filter=True)
