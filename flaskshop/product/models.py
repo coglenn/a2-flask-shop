@@ -8,7 +8,6 @@ from flaskshop.corelib.db import PropsItem
 from flaskshop.corelib.mc import cache, cache_by_args, rdb
 from flaskshop.database import Column, Model, db
 from flaskshop.settings import Config
-from sqlalchemy.dialects.postgresql import JSONB
 
 MC_KEY_FEATURED_PRODUCTS = "product:featured:{}"
 MC_KEY_PRODUCT_IMAGES = "product:product:{}:images"
@@ -32,7 +31,7 @@ class Product(Model):
     category_id = Column(db.Integer())
     is_featured = Column(db.Boolean(), default=False)
     product_type_id = Column(db.Integer())
-    attributes = Column(MutableDict.as_mutable(JSONB()))
+    attributes = Column(MutableDict.as_mutable(db.JSON()))
     description = Column(db.Text())
     if Config.USE_REDIS:
         description = PropsItem("description")
@@ -422,7 +421,7 @@ class ProductVariant(Model):
     quantity = Column(db.Integer(), default=0)
     quantity_allocated = Column(db.Integer(), default=0)
     product_id = Column(db.Integer(), default=0)
-    attributes = Column(MutableDict.as_mutable(JSONB()))
+    attributes = Column(MutableDict.as_mutable(db.JSON()))
 
     def __str__(self):
         return self.title or self.sku
@@ -787,12 +786,15 @@ def get_product_list_context(query, obj):
     for attr in attr_filter:
         print(f"attr: {attr}")
         value = request.args.get(attr.title)
-        print(value)
+        print(f"V: {value}")
         if value:
-            query = query.filter(Product.attributes.__getitem__(int(attr.id)) == value)
-            print(query)
+            print(f"atte.id: {attr.id}")
+            query = query.filter(Product.attributes.__getitem__(str(attr.id)) == str(value))
+            # print(query)
+            print({attr.title: int(value)})
             args_dict["default_attr"].update({attr.title: int(value)})
     args_dict.update(attr_filter=attr_filter)
+    print(args_dict)
 
     if request.args:
         args_dict.update(clear_filter=True)
