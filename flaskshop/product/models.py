@@ -8,7 +8,9 @@ from flaskshop.corelib.db import PropsItem
 from flaskshop.corelib.mc import cache, cache_by_args, rdb
 from flaskshop.database import Column, Model, db
 from sqlalchemy.sql.expression import cast
-from sqlalchemy import String
+from sqlalchemy.types import Unicode, String
+from sqlalchemy.dialects.postgresql import JSONB
+# from sqlalchemy import String
 from flaskshop.settings import Config
 
 MC_KEY_FEATURED_PRODUCTS = "product:featured:{}"
@@ -793,7 +795,8 @@ def get_product_list_context(query, obj):
             print(f"atte.id: {attr.id}")
             print(f"Value: {value}")
             # query = query.filter(Product.attributes[(str(attr.id))] == str(value))
-            query = Product.query.filter(cast(Product.__table__.c.attributes[attr.id], String) == value)
+            # query = Product.query.filter(cast(Product.__table__.c.attributes[attr.id], String) == value)
+            query = Product.query.filter(cast(Product.attributes[attr.id], JSONB).contains([value]))
             print(query)
             print({attr.title: int(value)})
             args_dict["default_attr"].update({attr.title: int(value)})
