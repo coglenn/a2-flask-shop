@@ -402,6 +402,11 @@ def receive(token):
 
 def events():
     print('Webhook Received')
+    parsed_request = request.get_json()
+    if parsed_request["object"] == "Event" and parsed_request["description"] == "tracker.updated":
+        event = easypost.Event.receive(request.data)
+        tracker = event.result
+        print(tracker)
     # data = json.loads(request.data)
     # result = data['result']
     # print(result['carrier'] + " - " + result['tracking_code'] + ": " + result['status'])
