@@ -242,9 +242,11 @@ def easypost_shipping_address():
 def payment_success(token):
     payment = create_payment(token, "stripe_pay")
     cust = stripe.Customer.retrieve(str(current_user.id))
+    print(cust)
     stripe_cust_address=cust['address']
     stripe_cust_name=cust['shipping']
     shipment = client.shipment.create(
+    id=f"shp_{token}",
     to_address={
         "name": stripe_cust_name['name'],
         "street1": stripe_cust_address['line1'],
@@ -252,6 +254,7 @@ def payment_success(token):
         "state": get_state_abbrev(stripe_cust_address['state']),
         "zip": stripe_cust_address['postal_code'],
         "country": "US",
+        "email": cust['email'],
     },
     from_address={
         "name": "Glenberts Fish Co.",
@@ -397,6 +400,24 @@ def receive(token):
     return render_template("orders/details.html", order=order)
 
 
+def events():
+    print('Webhook Received')
+    data = json.loads(request.data)
+    result = data['result']
+    print(result['carrier'] + " - " + result['tracking_code'] + ": " + result['status'])
+    if result['status'] in ["out_for_delivery","delivered"]:
+        #send notification via Twilio
+        print('test')
+        # message = client.messages.create(
+        #     body=result['status'],
+        #     from_=os.environ.get('TWILIO_PHONE'),
+        #      to=os.environ.get('NOTIFICATION_PHONE')
+        # )
+        # print(message.sid)
+
+    return '', 204
+
+
 @impl
 def flaskshop_load_blueprints(app):
     bp = Blueprint("order", __name__)
@@ -408,4 +429,5 @@ def flaskshop_load_blueprints(app):
     bp.add_url_rule("/payment_success/<string:token>", view_func=payment_success)
     bp.add_url_rule("/cancel/<string:token>", view_func=cancel_order)
     bp.add_url_rule("/receive/<string:token>", view_func=receive)
+    bp.add_url_rule("/events", view_func=events)
     app.register_blueprint(bp, url_prefix="/orders")
