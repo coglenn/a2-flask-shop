@@ -402,18 +402,18 @@ def receive(token):
 
 def events():
     print('Webhook Received')
-    data = json.loads(request.data)
-    result = data['result']
-    print(result['carrier'] + " - " + result['tracking_code'] + ": " + result['status'])
-    if result['status'] in ["out_for_delivery","delivered"]:
-        #send notification via Twilio
-        print('test')
-        # message = client.messages.create(
-        #     body=result['status'],
-        #     from_=os.environ.get('TWILIO_PHONE'),
-        #      to=os.environ.get('NOTIFICATION_PHONE')
-        # )
-        # print(message.sid)
+    # data = json.loads(request.data)
+    # result = data['result']
+    # print(result['carrier'] + " - " + result['tracking_code'] + ": " + result['status'])
+    # if result['status'] in ["out_for_delivery","delivered"]:
+    #     #send notification via Twilio
+    #     print('test')
+    #     # message = client.messages.create(
+    #     #     body=result['status'],
+    #     #     from_=os.environ.get('TWILIO_PHONE'),
+    #     #      to=os.environ.get('NOTIFICATION_PHONE')
+    #     # )
+    #     # print(message.sid)
 
     return '', 204
 
